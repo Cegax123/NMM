@@ -35,10 +35,11 @@ class Board:
     # Insert a piece in the board
     def insert_piece(self, player, mouse_pos):
         for v in self.V:
-            if  v.clicked(mouse_pos) and v.status==0:
-                v.status=player.order
-                pygame.draw.circle(self.WIN,player.piece_color,(v.screen_x,v.screen_y),2*v.radius)
+            if  v.clicked(mouse_pos) and v.status == 0:
+                v.status = player.order
+                pygame.draw.circle(self.WIN, player.piece_color, (v.screen_x, v.screen_y), 2 * v.radius)
                 return True
+
         return False
 
 class Cell:
@@ -68,10 +69,10 @@ class Cell:
         pygame.draw.circle(self.WIN, self.COLOR, (self.screen_x, self.screen_y), self.radius)
 
     def clicked(self, mouse_pos):
-        mx,my=mouse_pos
-        dx=self.screen_x-mx
-        dy=self.screen_y-my
-        return dx*dx+dy*dy<4*self.radius*self.radius
+        mx,my = mouse_pos
+        dx = self.screen_x - mx
+        dy = self.screen_y - my
+        return dx * dx + dy * dy < 4 * self.radius * self.radius
 
     def set_status(self, new_status):
         self.status = new_status
