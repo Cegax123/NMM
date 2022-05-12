@@ -15,7 +15,9 @@ def main():
     run = True
 
 
-    game = Game(WIN, "six", "white", "black")
+    game = Game(WIN, "nine", "first_color", "second_color")
+    WIN.fill(SCREEN_COLOR)
+    game.board.draw()
 
     while run:
         for event in pygame.event.get():
@@ -26,9 +28,10 @@ def main():
                 if event.key == pygame.K_ESCAPE:
                     run = False
             
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                game.move_insert_piece(pygame.mouse.get_pos())
 
-        WIN.fill(SCREEN_COLOR)
-        game.board.draw()
+
 
         pygame.display.flip()
 

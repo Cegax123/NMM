@@ -46,6 +46,8 @@
         "margin_y" : 50,
         "cell_color" : [54, 48, 98],
         "edge_color" : [54, 48, 98],
-        "radius_empty_cell" : 15
+        "radius_empty_cell" : 15,
+        "first_color" : [255, 255, 255],
+        "second_color" : [0, 0, 0]
     }
 }
