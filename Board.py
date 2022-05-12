@@ -1,6 +1,5 @@
 import json
 import pygame
-import string
 
 with open('conf.json') as f:
     options = json.load(f)
@@ -34,7 +33,7 @@ class Board:
             pygame.draw.line(self.WIN, board_options['edge_color'], self.V[e[0]].screen, self.V[e[1]].screen)
 
     # Insert a piece in the board
-    def insert_piece(self, player, id_selected_node):
+    def insert_piece(self, player, mouse_pos):
         pass
 
 class Cell:
@@ -52,7 +51,6 @@ class Cell:
         self.LEN_BOARD = screen_width - 2 * self.MARGIN_X
         self.LEN_EDGE = self.LEN_BOARD // (N-1)
 
-
         self.board_x, self.board_y = self.pos
         self.status = 0
 
@@ -67,5 +65,6 @@ class Cell:
     def clicked(self, mouse_pos):
         pass
 
-    def set_status(self):
-        pass
+    def set_status(self, new_status):
+        self.status = new_status
+
