@@ -6,15 +6,14 @@ with open('conf.json') as f:
     options = json.load(f)
 
     board_options = options['board']
+    game_options = options['game']
     f.close()
 
 class Game:
     def __init__(self, WIN, TYPE_BOARD : str, COLOR1 : str, COLOR2 : str):
-        with open('conf.json') as f:
-            data = json.load(f)
-            V = data['game'][TYPE_BOARD + '_cell']
-            E = data['game'][TYPE_BOARD + '_edge']
-            
+        V = game_options[TYPE_BOARD + '_cell']
+        E = game_options[TYPE_BOARD + '_edge']
+           
         N = 7
         if TYPE_BOARD == 'six':
             N = 5
