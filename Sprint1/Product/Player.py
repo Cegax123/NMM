@@ -6,10 +6,9 @@ class Player:
         self.pieces_in_board = 0
         self.pieces_to_insert = pieces_to_insert
 
-        self.status = 'insert' # 'move', 'fly'
+        self.status = 'insert'  # 'move', 'fly'
         self.winner = False
-    
-        
+
     def get_message_in_screen(self):
         if self.status == 'insert':
             return 'Piezas restantes a insertar: ' + str(self.pieces_to_insert)

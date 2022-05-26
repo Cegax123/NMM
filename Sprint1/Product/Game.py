@@ -1,45 +1,40 @@
 from Board import Board
+import json
 from Player import Player
+
+with open('conf.json') as f:
+    game_options = json.load(f)['game']
+    f.close()
+
 
 class Game:
     def __init__(self, type_board, type_game, name1, name2, color1, color2):
-        V = None # Cargamos los valores de V de conf
-        E = None # Cargamos los valores de E de conf
+        vertices = game_options[type_board + '_vertices']
+        edges = game_options[type_board + '_edges']
 
-        N = None # Setteamos el valor de N segun type_board
+        n = 0
 
-        self.board = Board(N, V, E)
+        if type_board == 'nine':
+            n = 6
+        elif type_board == 'five':
+            n = 4
+        else:
+            n = 2
+
+        self.board = Board(n, vertices, edges)
         self.players = []
         self.current = 0
         self.other = 1
         self.winner = None
+        self.turn_number = 0
 
         self.mode = 'insert' # 'to_select', 'selected', 'to_remove'
 
     def make_move(self, pos_mouse):
+        pass
 
-        if self.mode == 'insert':
-            result = self.board.insert_piece(self.players[self.turn_number], pos_mouse)
-            self.players[self.turn_number].insert_piece()
-
-            if not result['valid']:
-                return
-
-            if result['created_mill']:
-                self.board.mode = 'to_remove'
-            else:
-                self.turn_number = self.turn_number ^ 1
-                if not self.players[self.turn_number].status == 'insert':
-                    self.board.mode = 'to_move'
-
-        elif self.mode == 'to_remove':
-            result = self.board.remove_piece(self.players[self.turn_number], pos_mouse)
-
-
-    def draw(self):
+    def draw(self, surf):
         # Dibujar otros aspectos del juego (como el nombre del jugador actual
 
-        
-
         # Draw board
-        self.board.draw()
+        self.board.draw(surf)

@@ -1,27 +1,43 @@
+import pygame.draw
+from Vertex import Vertex
+import json
+
+with open('conf.json') as f:
+    options = json.load(f)
+    board_options = options['board']
+
+    f.close()
+
+
 class Board:
-    def __init__(self, N, V, E):
-        self.V = [] # Lista de objetos Vertex 
-        self.E = [] # Lista de aristas: (v1, v2) -> se usaran las posiciones que se encuentran en self.V
-        self.adj = None # Lista de adyecencia: {0 : [2, 3], 1 : [3, 4]} -> se usaran las posiciones que se encuentran en self.V
-        
+    def __init__(self, n, vertices, edges):
+        self.side = board_options['total'] / n
+        self.V = [Vertex((x, y), self.side) for x, y in vertices]
+        self.E = edges
+        self.adj = {}
+
+        for v in range(len(self.V)):
+            self.adj[v] = []
+
+        for e in self.E:
+            self.adj[e[0]].append(e[1])
+            self.adj[e[1]].append(e[0])
 
         self.message_in_screen = {
-            'insert' : 'Inserte una pieza en alguna casilla vacia',
-            'to_select' : 'Seleccione una pieza a mover',
-            'selected' : 'Seleccione una casilla vacia como destino',
-            'to_remove' : 'Escoja una pieza del oponente a eliminar'
+            'insert': 'Inserte una pieza en alguna casilla vacia',
+            'to_select': 'Seleccione una pieza a mover',
+            'selected': 'Seleccione una casilla vacia como destino',
+            'to_remove': 'Escoja una pieza del oponente a eliminar'
         }
 
         self.selected_piece = None
 
-    def draw(self):
-        # Draw board
+    def draw(self, surf):
+        for e in self.E:
+            pygame.draw.line(surf, board_options['edge_color'], self.V[e[0]].pos_screen, self.V[e[1]].pos_screen)
 
-        
-
-        # Draw all Vertex
         for v in self.V:
-            v.draw()
+            v.draw(surf)
 
     def get_vertex(self, pos_mouse):
         pass
@@ -33,22 +49,21 @@ class Board:
         self.mode = new_mode
 
     def insert_piece(self, player, id_vertex):
-        result = {'valid' : None, 'created_mill' : None}
+        result = {'valid': None, 'created_mill': None}
 
         return result
 
     def remove_piece(self, player, id_vertex):
-        result = {'valid' : None}
+        result = {'valid': None}
 
         return result
 
     def select_piece(self, id_vertex):
-        result = {'valid' : None}
+        result = {'valid': None}
 
         return result
 
     def move_piece(self, player, id_vertex):
-        result = {'valid' : None, 'created_mill' : None}
-
+        result = {'valid': None, 'created_mill': None}
 
         return result
