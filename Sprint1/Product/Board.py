@@ -40,7 +40,10 @@ class Board:
             v.draw(surf)
 
     def get_vertex(self, pos_mouse):
-        pass
+        for i in range(len(self.V)):
+            if self.V[i].clicked(pos_mouse):
+                return i
+        return -1
 
     def verify_mill(self, id_vertex):
         pass
@@ -51,6 +54,12 @@ class Board:
     def insert_piece(self, player, id_vertex):
         result = {'valid': None, 'created_mill': None}
 
+        if id_vertex!=-1 and self.V[id_vertex].status == 0 and player.pieces_to_insert > 0:
+            result['valid']=True
+            self.V[id_vertex].update(player)
+            player.insert_piece()
+        else:
+            result['valid']=False
         return result
 
     def remove_piece(self, player, id_vertex):

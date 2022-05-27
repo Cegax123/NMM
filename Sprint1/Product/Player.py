@@ -17,3 +17,8 @@ class Player:
         else:
             return 'Mueve una pieza a cualquier casilla vacia'
 
+    def insert_piece(self):
+        self.pieces_to_insert -= 1
+        self.pieces_in_board += 1
+        if(self.pieces_to_insert == 0):
+            self.status = 'move'

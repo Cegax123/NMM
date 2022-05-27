@@ -15,18 +15,19 @@ pygame.display.set_caption("Nine Men's Morris Game")
 
 def main():
 
-    game = Game('three', None, None, None, None, None)
+    game = Game('nine', None, None, None, board_options['first_color'],board_options['second_color'] )
+
+    
 
     run = True
     while run:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                game.make_move(pygame.mouse.get_pos())
         WIN.fill((screen_options['color']))
-
         game.draw(WIN)
-
         pygame.display.update()
 
     pygame.quit()
