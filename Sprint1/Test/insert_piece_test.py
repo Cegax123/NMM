@@ -1,5 +1,6 @@
-#import sys
-#sys.path.append("..\Product")
+import sys
+sys.path.append("../Product")
+
 import unittest
 from random import shuffle
 from random import seed
@@ -11,11 +12,11 @@ import json
 class TestInsertPiece(unittest.TestCase):
     
     def test_nine(self):
-        with open('conf.json') as f:
+        with open('../Product/conf.json') as f:
             data=json.load(f)
-            game_options = data['game']
             board_options = data['board']
             f.close()
+
         for k in range(10):
             g=Game('nine',None,None,None,board_options['first_color'],board_options['second_color'])
             x=[i for i in range(len(g.board.V))]
@@ -33,6 +34,5 @@ class TestInsertPiece(unittest.TestCase):
                 self.assertNotEqual(g.board.V[i].status,(int)(g.turn_player().pieces_to_insert==0))
             
         
-
 if __name__ == '__main__':
     unittest.main()

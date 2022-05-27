@@ -3,7 +3,7 @@ from Board import Board
 import json
 from Player import Player
 
-with open('./conf.json') as f:
+with open('../Product/conf.json') as f:
     game_options = json.load(f)['game']
     f.close()
 

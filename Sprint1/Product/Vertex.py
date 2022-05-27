@@ -1,7 +1,7 @@
 import pygame.draw
 import json
 
-with open('./conf.json') as f:
+with open('../Product/conf.json') as f:
     options = json.load(f)
     board_options = options['board']
 
