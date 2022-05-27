@@ -3,7 +3,7 @@ from Board import Board
 import json
 from Player import Player
 
-with open('conf.json') as f:
+with open('./conf.json') as f:
     game_options = json.load(f)['game']
     f.close()
 
@@ -13,19 +13,19 @@ class Game:
         vertices = game_options[type_board + '_vertices']
         edges = game_options[type_board + '_edges']
 
-        n = 0
+        self.n = 0
         
         if type_board == 'nine':
             p = 9
-            n = 6
+            self.n = 6
         elif type_board == 'five':
             p = 5
-            n = 4
+            self.n = 4
         else:
             p = 3
-            n = 2
+            self.n = 2
 
-        self.board = Board(n, vertices, edges)
+        self.board = Board(self.n, vertices, edges)
         self.players = [Player(name1, 1, color1, p), Player(name2, 2, color2, p)]
         self.current = 0
         self.other = 1
@@ -34,11 +34,12 @@ class Game:
 
         self.mode = 'insert' # 'to_select', 'selected', 'to_remove'
 
-        
+    def turn_player(self):
+        return self.players[self.turn_number%2]
 
     def make_move(self, pos_mouse):
         if self.mode == 'insert':
-            result = self.board.insert_piece(self.players[self.turn_number%2], self.board.get_vertex(pos_mouse))
+            result = self.board.insert_piece(self.turn_player(), self.board.get_vertex(pos_mouse))
             if result['valid']:
                 self.turn_number += 1
                 

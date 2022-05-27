@@ -2,7 +2,7 @@ import pygame
 import json
 from Game import Game
 
-with open('conf.json') as f:
+with open('./conf.json') as f:
     data = json.load(f)
     screen_options = data['screen']
     board_options = data['board']

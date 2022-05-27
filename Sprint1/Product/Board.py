@@ -2,7 +2,7 @@ import pygame.draw
 from Vertex import Vertex
 import json
 
-with open('conf.json') as f:
+with open('./conf.json') as f:
     options = json.load(f)
     board_options = options['board']
 
