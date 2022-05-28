@@ -48,26 +48,23 @@ class Board:
     def verify_mill(self, id_vertex):
         pass
 
-    def set_mode(self, new_mode):
-        self.mode = new_mode
-
     def insert_piece(self, player, id_vertex):
-        result = {'valid': None, 'created_mill': None}
+        result = {'valid': False, 'created_mill': False}
 
-        if id_vertex!=-1 and self.V[id_vertex].status == 0 and player.pieces_to_insert > 0:
-            result['valid']=True
+        if id_vertex != -1 and self.V[id_vertex].status == 0 and player.pieces_to_insert > 0:
+            result['valid'] = True
             self.V[id_vertex].update(player)
             player.insert_piece()
         else:
-            result['valid']=False
+            result['valid'] = False
         return result
 
     def remove_piece(self, player, id_vertex):
-        result = {'valid': None}
+        result = {'valid': False, 'winner': False}
 
         return result
 
-    def select_piece(self, id_vertex):
+    def select_piece(self, player, id_vertex):
         result = {'valid': None}
 
         return result

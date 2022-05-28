@@ -14,10 +14,7 @@ pygame.display.set_caption("Nine Men's Morris Game")
 
 
 def main():
-
-    game = Game('nine', None, None, None, board_options['first_color'],board_options['second_color'] )
-
-    
+    game = Game('nine', None, None, None, board_options['first_color'], board_options['second_color'] )
 
     run = True
     while run:

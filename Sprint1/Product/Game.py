@@ -34,16 +34,26 @@ class Game:
 
         self.mode = 'insert' # 'to_select', 'selected', 'to_remove'
 
-    def turn_player(self):
-        return self.players[self.turn_number%2]
+    def current_player(self):
+        return self.players[self.turn_number]
+
+    def other_player(self):
+        return self.players[self.turn_number^1]
 
     def make_move(self, pos_mouse):
         if self.mode == 'insert':
-            result = self.board.insert_piece(self.turn_player(), self.board.get_vertex(pos_mouse))
+            result = self.board.insert_piece(self.current_player(), self.board.get_vertex(pos_mouse))
             if result['valid']:
-                self.turn_number += 1
-                
-        
+                if self.players[1].status == 'move':
+                    self.mode = 'to_select'
+
+                if result['created_mill']:
+                    self.mode = 'to_remove'
+                else:
+                    self.turn_number ^= 1
+
+    def check_winner(self):
+        return self.players[0].lost_game() or self.players[1].lost_game()
 
     def draw(self, surf):
         # Dibujar otros aspectos del juego (como el nombre del jugador actual

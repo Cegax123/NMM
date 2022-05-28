@@ -1,3 +1,5 @@
 .env/
 __pycache__/
 .idea/
+Sprint1/Product/__pycache__/
+Sprint1/Test/__pycache__/

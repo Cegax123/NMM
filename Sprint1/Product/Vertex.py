@@ -17,10 +17,9 @@ class Vertex:
     def __init__(self, pos_board, side):
         self.pos_board = pos_board
         self.pos_screen = (BOARD_START_X + side * pos_board[0], BOARD_START_Y + side * pos_board[1])
-        self.status = 0 #'empty'  # 'black', 'white'
+        self.status = 0  # 'empty'  # 'black', 'white'
         self.color = board_options['vertex_color']
         self.radius = board_options['radius_empty_vertex']
-
 
     def draw(self, surf):
         if self.status == 0:

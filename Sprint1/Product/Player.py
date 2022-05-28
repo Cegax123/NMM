@@ -20,5 +20,8 @@ class Player:
     def insert_piece(self):
         self.pieces_to_insert -= 1
         self.pieces_in_board += 1
-        if(self.pieces_to_insert == 0):
+        if self.pieces_to_insert == 0:
             self.status = 'move'
+
+    def lost_game(self):
+        return self.pieces_to_insert == 0 and self.pieces_in_board < 2
