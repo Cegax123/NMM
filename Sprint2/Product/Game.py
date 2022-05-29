@@ -39,22 +39,24 @@ class Game:
         return self.players[(self.turn_number+1)%2]
 
     def make_move(self, pos_mouse):
+        id_vertex = self.board.get_vertex(pos_mouse)
+        if id_vertex == -1: return
         if self.current_player().status == 'insert':
-            change = self.board.insert_piece(self.current_player(), self.board.get_vertex(pos_mouse))
+            change = self.board.insert_piece(self.current_player(), id_vertex)
             if change:
                 self.turn_number+=1
         elif self.current_player().status == 'select':
-            self.board.select_piece(self.current_player(), self.board.get_vertex(pos_mouse))
+            self.board.select_piece(self.current_player(), id_vertex)
         elif self.current_player().status == 'move':
-            change = self.board.move_piece(self.current_player(), self.board.get_vertex(pos_mouse))
+            change = self.board.move_piece(self.current_player(), id_vertex)
             if change:
                 self.turn_number += 1
         elif self.current_player().status == 'fly':
-            change = self.board.fly_piece(self.current_player(), self.board.get_vertex(pos_mouse))
+            change = self.board.fly_piece(self.current_player(), id_vertex)
             if change:
                 self.turn_number += 1
         elif self.current_player().status == 'remove':
-            change = self.board.remove_piece(self.current_player(), self.other_player(), self.board.get_vertex(pos_mouse))
+            change = self.board.remove_piece(self.current_player(), self.other_player(), id_vertex)
             if change:
                 self.turn_number += 1
 

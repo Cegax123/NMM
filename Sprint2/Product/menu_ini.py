@@ -27,10 +27,10 @@ class MenuIni:
         self.selected_mode = None
 
     def draw(self,surface):
-        surface.blit(self.nmm_img,(self.nmm_rect))        
+        surface.blit(self.nmm_img, self.nmm_rect)
         self.start_button.draw(surface)
-        text1 = Text("NINE MEN'S MORRIS",85,'verdana',(75,43,140))  
-        text1.draw(200,150,surface)
+        text1 = Text("NINE MEN'S MORRIS", 85, 'verdana', (75,43,140))
+        text1.draw(200, 150, surface)
 
     def check_click(self, mouse_pos):
         if self.start_button.is_clicked(mouse_pos):
