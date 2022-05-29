@@ -1,3 +1,6 @@
+from select import select
+
+
 class Player:
     def __init__(self, name, turn, color_piece, pieces_to_insert):
         self.name = name
@@ -22,11 +25,25 @@ class Player:
         self.pieces_in_board += 1
         if self.pieces_to_insert == 0:
             self.status = 'select'
-    def select_update(self):
+    def select_update(self, id_vertex):
+        self.selected_id = id_vertex
         if self.pieces_in_board > 3:
             self.status = 'move'
         else:
             self.status = 'fly'
+    
+    def remove_update(self):
+        self.pieces_in_board -= 1
+        if self.pieces_to_insert== 0:
+            self.status = 'select'
+        else:
+            self.status = 'insert'
+    
+    def update(self):
+        if self.pieces_to_insert == 0:
+            self.status = 'select'
+        else :
+            self.status = 'insert'
 
     def lost_game(self):
-        return self.pieces_to_insert == 0 and self.pieces_in_board < 2
+        return self.pieces_to_insert + self.pieces_in_board < 3

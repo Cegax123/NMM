@@ -41,6 +41,9 @@ class Game:
     def make_move(self, pos_mouse):
         id_vertex = self.board.get_vertex(pos_mouse)
         if id_vertex == -1: return
+        if self.check_winner():
+            print("juego terminado")
+            return
         if self.current_player().status == 'insert':
             change = self.board.insert_piece(self.current_player(), id_vertex)
             if change:
