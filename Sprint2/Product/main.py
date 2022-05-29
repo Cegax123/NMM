@@ -1,6 +1,8 @@
 import pygame
 import json
+from menu_ini import MenuIni
 from Game import Game
+from menu_mode import MenuMode
 
 with open('../Product/conf.json') as f:
     data = json.load(f)
@@ -14,21 +16,47 @@ pygame.display.set_caption("Nine Men's Morris Game")
 
 
 def main():
-    game = Game('nine', None, None, None, board_options['first_color'], board_options['second_color'] )
-
+    
+    current_screen = 'menu_ini'
+    menu_ini = MenuIni()
+    menu_mode = MenuMode()
+    
     run = True
     while run:
+        WIN.fill((screen_options['color']))
+        
+        if current_screen == 'menu_ini' :
+            menu_ini.draw(WIN)    
+        
+        elif current_screen == 'menu_mode':
+            menu_mode.draw(WIN)
+
+        elif current_screen == 'game':
+            game.draw(WIN)
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
             if event.type == pygame.MOUSEBUTTONDOWN:
-                game.make_move(pygame.mouse.get_pos())
-        WIN.fill((screen_options['color']))
-        game.draw(WIN)
+                mouse_pos = pygame.mouse.get_pos()
+
+                if current_screen == 'menu_ini':
+                    button = menu_ini.check_click(mouse_pos)
+                    if button == 'start':
+                        current_screen = 'menu_mode'
+
+                
+                elif current_screen == 'menu_mode':
+                    if menu_mode.check_click(mouse_pos):
+                        current_screen = 'game'
+                        game = Game(menu_mode.selected_mode, None, None, None, board_options['first_color'], board_options['second_color'] )
+
+                else:
+                    game.make_move(pygame.mouse.get_pos())
+
         pygame.display.update()
 
     pygame.quit()
-
 
 if __name__ == '__main__':
     main()
