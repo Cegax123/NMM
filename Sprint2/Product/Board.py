@@ -46,30 +46,30 @@ class Board:
         return -1
 
     def verify_mill(self, id_vertex):
+
         pass
 
     def insert_piece(self, player, id_vertex):
-        result = {'valid': False, 'created_mill': False}
-
         if id_vertex != -1 and self.V[id_vertex].status == 0 and player.pieces_to_insert > 0:
-            result['valid'] = True
             self.V[id_vertex].update(player)
-            player.insert_piece()
+            player.insert_update()
+            turn_change = not self.verify_mill(id_vertex)
         else:
-            result['valid'] = False
-        return result
+            turn_change = False
+        return turn_change
 
-    def remove_piece(self, player, id_vertex):
+    def remove_piece(self, player, enemy, id_vertex):
         result = {'valid': False, 'winner': False}
 
         return result
 
     def select_piece(self, player, id_vertex):
-        result = {'valid': None}
-
-        return result
+        pass
 
     def move_piece(self, player, id_vertex):
         result = {'valid': None, 'created_mill': None}
-
+        
         return result
+
+    def fly_piece(self, player, id_vertex):
+        pass

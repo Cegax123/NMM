@@ -27,21 +27,38 @@ class Game:
 
         self.board = Board(self.n, vertices, edges)
         self.players = [Player(name1, 1, color1, p), Player(name2, 2, color2, p)]
-        self.current = 0
-        self.other = 1
         self.winner = None
         self.turn_number = 0
 
         self.mode = 'insert' # 'to_select', 'selected', 'to_remove'
 
     def current_player(self):
-        return self.players[self.turn_number]
+        return self.players[self.turn_number%2]
 
     def other_player(self):
-        return self.players[self.turn_number^1]
+        return self.players[(self.turn_number+1)%2]
 
     def make_move(self, pos_mouse):
-        if self.mode == 'insert':
+        if self.current_player().status == 'insert':
+            change = self.board.insert_piece(self.current_player(), self.board.get_vertex(pos_mouse))
+            if change:
+                self.turn_number+=1
+        elif self.current_player().status == 'select':
+            self.board.select_piece(self.current_player(), self.board.get_vertex(pos_mouse))
+        elif self.current_player().status == 'move':
+            change = self.board.move_piece(self.current_player(), self.board.get_vertex(pos_mouse))
+            if change:
+                self.turn_number += 1
+        elif self.current_player().status == 'fly':
+            change = self.board.fly_piece(self.current_player(), self.board.get_vertex(pos_mouse))
+            if change:
+                self.turn_number += 1
+        elif self.current_player().status == 'remove':
+            change = self.board.remove_piece(self.current_player(), self.other_player(), self.board.get_vertex(pos_mouse))
+            if change:
+                self.turn_number += 1
+
+        '''if self.mode == 'insert':
             result = self.board.insert_piece(self.current_player(), self.board.get_vertex(pos_mouse))
             if result['valid']:
                 if self.players[1].status == 'move':
@@ -52,7 +69,7 @@ class Game:
                 else:
                     self.turn_number ^= 1
 
-        elif self.mode == 'to_select':
+        elif self.mode == 'to_select':  
             result = self.board.select_piece(self.current_player(), self.board.get_vertex(pos_mouse))
             if result['valid']:
                 self.mode = 'selected'
@@ -73,7 +90,7 @@ class Game:
                     if self.current_player().pieces_to_insert > 0:
                         self.mode = 'insert'
                     else:
-                        self.mode = 'to_select'
+                        self.mode = 'to_select' '''
 
     def check_winner(self):
         return self.players[0].lost_game() or self.players[1].lost_game()
