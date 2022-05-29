@@ -39,6 +39,9 @@ class Game:
         return self.players[(self.turn_number+1)%2]
 
     def make_move(self, pos_mouse):
+        if self.check_winner():
+            print("juego terminado")
+            return
         if self.current_player().status == 'insert':
             change = self.board.insert_piece(self.current_player(), self.board.get_vertex(pos_mouse))
             if change:
