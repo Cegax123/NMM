@@ -45,6 +45,31 @@ class Board:
                 return i
         return -1
 
+    def update_border_vertex(self, player):
+        for v in self.V:
+            v.border = None
+
+        for id, v in enumerate(self.V):
+            '''if player.status == 'select':
+                if v.status == player.turn:
+                    v.border = 'target_piece' '''
+
+            if player.status == 'move':
+                if id == player.selected_id:
+                    v.border = 'selected_piece'
+                elif id in self.adj[player.selected_id] and v.status == 0:
+                    v.border = 'target_piece'
+
+            elif player.status == 'fly':
+                if id == player.selected_id:
+                    v.border = 'selected_piece'
+                elif v.status == 0:
+                    v.border = 'target_piece'
+
+            elif player.status == 'remove':
+                if v.status != 0 and v.status != player.turn:
+                    v.border = 'remove_piece'
+
     def colinear(self, u, v, w): #verifica si 3 vertices son colineares
         diag1 = self.V[u].pos_board[0] - self.V[u].pos_board[1] == self.V[v].pos_board[0] - self.V[v].pos_board[1] == self.V[w].pos_board[0] - self.V[w].pos_board[1]
         diag2 = self.V[u].pos_board[0] + self.V[u].pos_board[1] == self.V[v].pos_board[0] + self.V[v].pos_board[1] == self.V[w].pos_board[0] + self.V[w].pos_board[1]
@@ -77,24 +102,25 @@ class Board:
             self.V[id_vertex].update(player)
             player.insert_update()
             if self.verify_mill(id_vertex):
-                turn_change = False
+                change_turn = False
                 player.status = 'remove'
             else:
-                turn_change = True
+                change_turn = True
         else:
-            turn_change = False
-        return turn_change
+            change_turn = False
+
+        return change_turn
 
     def remove_piece(self, player, enemy, id_vertex):
         if id_vertex != -1 and self.V[id_vertex].status == enemy.turn:
             self.V[id_vertex].update()
             player.update()
             enemy.remove_update()
-            turn_change = True
+            change_turn = True
         else:
-            turn_change = False
+            change_turn = False
 
-        return turn_change
+        return change_turn
 
     def select_piece(self, player, id_vertex):
         if id_vertex !=-1 and self.V[id_vertex].status == player.turn:
@@ -103,48 +129,49 @@ class Board:
             
 
     def move_piece(self, player, id_vertex):
-        if id_vertex != -1:
-            if id_vertex == player.selected_id: #te mueves al mismo lugar
-                player.update()
-                turn_change = False
-            elif self.V[id_vertex].status == player.turn: #te mueves a diferente lugar pero mismo color
-                self.select_piece(player, id_vertex)
-                turn_change = False
-            elif id_vertex in self.adj[player.selected_id] and self.V[id_vertex].status == 0: #te mueves a una posicion vacia correcta
-                self.V[player.selected_id].update()
-                self.V[id_vertex].update(player)
-                player.update()
-                if self.verify_mill(id_vertex):
-                    turn_change = False
-                    player.status = 'remove'
-                else:
-                    turn_change = True
-            else:
-                turn_change = False
-        else:
-            turn_change = False
+        if id_vertex == player.selected_id: #te mueves al mismo lugar
+            player.update()
+            change_turn = False
+
+        elif self.V[id_vertex].status == player.turn: #te mueves a diferente lugar pero mismo color
             
-        return turn_change        
+            self.select_piece(player, id_vertex)
+            change_turn = False
+
+        elif id_vertex in self.adj[player.selected_id] and self.V[id_vertex].status == 0: #te mueves a una posicion vacia correcta
+            self.V[player.selected_id].update()
+            self.V[id_vertex].update(player)
+            player.update()
+            if self.verify_mill(id_vertex):
+                change_turn = False
+                player.status = 'remove'
+            else:
+                change_turn = True
+        else:
+            change_turn = False
+            
+        return change_turn        
 
     def fly_piece(self, player, id_vertex):
         if id_vertex != -1:
             if id_vertex == player.selected_id:
                 player.update()
-                turn_change = False
+                change_turn = False
             elif self.V[id_vertex].status == player.turn:
                 self.select_piece(player, id_vertex)
-                turn_change = False
+                change_turn = False
             elif self.V[id_vertex].status == 0:
                 self.V[player.selected_id].update()
                 self.V[id_vertex].update(player)
                 player.update()
                 if self.verify_mill(id_vertex):
-                    turn_change = False
+                    change_turn = False
                     player.status = 'remove'
                 else:
-                    turn_change = True
+                    change_turn = True
             else:
-                turn_change = False
+                change_turn = False
         else:
-            turn_change = False
-        return turn_change
+            change_turn = False
+            
+        return change_turn

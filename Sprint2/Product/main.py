@@ -3,6 +3,7 @@ import json
 from menu_ini import MenuIni
 from Game import Game
 from menu_mode import MenuMode
+from text import Text
 
 with open('../Product/conf.json') as f:
     data = json.load(f)
@@ -20,6 +21,7 @@ def main():
     current_screen = 'menu_ini'
     menu_ini = MenuIni()
     menu_mode = MenuMode()
+    winner = None
     
     run = True
     while run:
@@ -33,6 +35,9 @@ def main():
 
         elif current_screen == 'game':
             game.draw(WIN)
+        
+        elif current_screen == 'win_menu':
+            Text('winner is ' + winner.name, 20, 'verdana', (75,43,140)).draw(100, 100, WIN)
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -49,10 +54,13 @@ def main():
                 elif current_screen == 'menu_mode':
                     if menu_mode.check_click(mouse_pos):
                         current_screen = 'game'
-                        game = Game(menu_mode.selected_mode, None, None, None, board_options['first_color'], board_options['second_color'] )
+                        game = Game(menu_mode.selected_mode, None, 'Player 1', 'Player 2', board_options['first_color'], board_options['second_color'] )
 
                 else:
                     game.make_move(pygame.mouse.get_pos())
+                    if game.check_winner():
+                        current_screen = 'win_menu'
+                        winner = game.get_winner()
 
         pygame.display.update()
 

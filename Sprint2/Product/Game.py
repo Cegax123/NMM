@@ -14,19 +14,23 @@ class Game:
         edges = game_options[type_board + '_edges']
 
         self.n = 0
-        
+
         if type_board == 'nine':
             p = 9
             self.n = 6
+            threshold_fly = 3
         elif type_board == 'five':
             p = 5
             self.n = 4
+            threshold_fly = 0
         else:
             p = 3
             self.n = 2
+            threshold_fly = 0
+
 
         self.board = Board(self.n, vertices, edges)
-        self.players = [Player(name1, 1, color1, p), Player(name2, 2, color2, p)]
+        self.players = [Player(name1, 1, color1, p, threshold_fly), Player(name2, 2, color2, p, threshold_fly)]
         self.winner = None
         self.turn_number = 0
 
@@ -41,67 +45,39 @@ class Game:
     def make_move(self, pos_mouse):
         id_vertex = self.board.get_vertex(pos_mouse)
         if id_vertex == -1: return
-        if self.check_winner():
-            print("juego terminado")
-            return
+
         if self.current_player().status == 'insert':
-            change = self.board.insert_piece(self.current_player(), id_vertex)
-            if change:
+            change_turn = self.board.insert_piece(self.current_player(), id_vertex)
+            if change_turn:
                 self.turn_number+=1
         elif self.current_player().status == 'select':
             self.board.select_piece(self.current_player(), id_vertex)
         elif self.current_player().status == 'move':
-            change = self.board.move_piece(self.current_player(), id_vertex)
-            if change:
+            change_turn = self.board.move_piece(self.current_player(), id_vertex)
+            if change_turn:
                 self.turn_number += 1
         elif self.current_player().status == 'fly':
-            change = self.board.fly_piece(self.current_player(), id_vertex)
-            if change:
+            change_turn = self.board.fly_piece(self.current_player(), id_vertex)
+            if change_turn:
                 self.turn_number += 1
         elif self.current_player().status == 'remove':
-            change = self.board.remove_piece(self.current_player(), self.other_player(), id_vertex)
-            if change:
+            change_turn = self.board.remove_piece(self.current_player(), self.other_player(), id_vertex)
+            if change_turn:
                 self.turn_number += 1
 
-        '''if self.mode == 'insert':
-            result = self.board.insert_piece(self.current_player(), self.board.get_vertex(pos_mouse))
-            if result['valid']:
-                if self.players[1].status == 'move':
-                    self.mode = 'to_select'
-
-                if result['created_mill']:
-                    self.mode = 'to_remove'
-                else:
-                    self.turn_number ^= 1
-
-        elif self.mode == 'to_select':  
-            result = self.board.select_piece(self.current_player(), self.board.get_vertex(pos_mouse))
-            if result['valid']:
-                self.mode = 'selected'
-
-        elif self.mode == 'selected':
-            result = self.board.move_piece(self.current_player(), self.board.get_vertex(pos_mouse))
-            if result['valid']:
-                if result['created_mill']:
-                    self.mode = 'to_remove'
-
-        else:
-            result = self.board.remove_piece(self.current_player(), self.board.get_vertex(pos_mouse))
-            if result['valid']:
-                if self.check_winner():
-                    self.mode = 'over'
-                else:
-                    self.turn_number ^= 1
-                    if self.current_player().pieces_to_insert > 0:
-                        self.mode = 'insert'
-                    else:
-                        self.mode = 'to_select' '''
+        self.board.update_border_vertex(self.current_player())
 
     def check_winner(self):
         return self.players[0].lost_game() or self.players[1].lost_game()
 
+    def get_winner(self):
+        if self.players[0].lost_game():
+            return self.players[1]
+        else:
+            return self.players[0]
+
     def draw(self, surf):
         # Dibujar otros aspectos del juego (como el nombre del jugador actual
-
+        
         # Draw board
         self.board.draw(surf)
