@@ -23,7 +23,7 @@ class MenuMode:
         self.selected_mode = None
         self.text1 = Text("Three men",60,'arialblack',(10,110,168))
         self.text2 = Text("Nine men",60,'arialblack',(10,110,168))
-        self.text3 = Text("Six men",60,'arialblack',(10,110,168))
+        self.text3 = Text("Five men",60,'arialblack',(10,110,168))
 
 
     def draw(self,surface):
