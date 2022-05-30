@@ -13,28 +13,27 @@ import json
 
 class TestInsertPiece(unittest.TestCase):
 
-    def test_nine(self):
+    def setUp(self):
         with open('../Product/conf.json') as f:
-            data = json.load(f)
-            board_options = data['board']
+            settings=json.load(f)
+            self.game_options = settings['game']
+            self.board_options = settings['board']
             f.close()
+        self.game = Game('nine', None, 'Player 1', 'Player 2', self.board_options['first_color'], self.board_options['second_color'] )
+    
+    def tearDown(self):
+        pass
+    
+    def test_empty_cell(self):
+        id = randint(0,len(self.game.board.V))
+        self.game.board.insert_piece(self.game.current_player(),id)
+        self.assertEqual(self.game.board.V[id].status,self.game.current_player().turn)
 
-        for k in range(10):
-            g = Game('nine', None, None, None, board_options['first_color'], board_options['second_color'])
-            x = [i for i in range(len(g.board.V))]
-            shuffle(x)
-            for i in x:
-                r = board_options['radius_empty_vertex']
-                m = board_options['total'] // g.n - 2 * r
-                x, y = g.board.V[i].pos_screen
-                for j in range(100):
-                    g.make_move((x + randint(2 * r, m), y + randint(2 * r, m)))
-                    self.assertEqual(g.board.V[i].status, 0)
-                    g.make_move((x + randint(-m, -2 * r), y + randint(-m, -2 * r)))
-                    self.assertEqual(g.board.V[i].status, 0)
-                g.make_move((x + randint(-r, r), y + randint(-r, r)))
-                self.assertNotEqual(g.board.V[i].status, int(g.current_player().pieces_to_insert == 0))
-
+    def test_ocuped_cell(self):
+        id = randint(0,len(self.game.board.V))
+        self.game.board.insert_piece(self.game.current_player(),id)
+        self.game.board.insert_piece(self.game.other_player(),id)
+        self.assertNotEqual(self.game.board.V[id].status,self.game.other_player().turn)
 
 if __name__ == '__main__':
     unittest.main()
