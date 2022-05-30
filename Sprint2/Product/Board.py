@@ -1,3 +1,4 @@
+from turtle import pos
 import pygame.draw
 from Vertex import Vertex
 import json
@@ -48,6 +49,7 @@ class Board:
     def update_border_vertex(self, player):
         for v in self.V:
             v.border = None
+        pos_remove=self.get_posible_takes(player)
 
         for id, v in enumerate(self.V):
             '''if player.status == 'select':
@@ -67,7 +69,7 @@ class Board:
                     v.border = 'target_piece'
 
             elif player.status == 'remove':
-                if v.status != 0 and v.status != player.turn:
+                if v.status != 0 and id in pos_remove:
                     v.border = 'remove_piece'
 
     def colinear(self, u, v, w): #verifica si 3 vertices son colineares
@@ -97,6 +99,17 @@ class Board:
                     return True
         return False
 
+    def get_posible_takes(self, player):
+        pos_moves = []
+        for i in range(len(self.V)):
+            if self.V[i].status==3-player.turn and not self.verify_mill(i):
+                pos_moves.append(i)
+        if len(pos_moves)==0:
+            for i in range(len(self.V)):
+                if self.V[i].status==3-player.turn:
+                    pos_moves.append(i)
+        return pos_moves
+
     def insert_piece(self, player, id_vertex):
         if id_vertex != -1 and self.V[id_vertex].status == 0 and player.pieces_to_insert > 0:
             self.V[id_vertex].update(player)
@@ -112,7 +125,8 @@ class Board:
         return change_turn
 
     def remove_piece(self, player, enemy, id_vertex):
-        if id_vertex != -1 and self.V[id_vertex].status == enemy.turn:
+        pos_remove=self.get_posible_takes(player)
+        if id_vertex != -1 and id_vertex in pos_remove:
             self.V[id_vertex].update()
             player.update()
             enemy.remove_update()

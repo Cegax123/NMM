@@ -21,14 +21,14 @@ class MenuMode:
         self.nine_button = Button(466,want_dow,self.nine_img,1)
         self.five_button = Button(832,want_dow,self.five_img,1)
         self.selected_mode = None
-        self.text1 = Text("Three pieces",65,'arialblack',(10,110,168))
-        self.text2 = Text("Nine pieces",65,'arialblack',(10,110,168))
-        self.text3 = Text("Six pieces",65,'arialblack',(10,110,168))
+        self.text1 = Text("Three men",60,'arialblack',(10,110,168))
+        self.text2 = Text("Nine men",60,'arialblack',(10,110,168))
+        self.text3 = Text("Six men",60,'arialblack',(10,110,168))
 
 
     def draw(self,surface):
         #Text
-        self.text1.draw(100,100,surface)
+        self.text1.draw(90,100,surface)
         self.text2.draw(466,100,surface)
         self.text3.draw(832,100,surface)
         

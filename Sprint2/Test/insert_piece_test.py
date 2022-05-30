@@ -1,4 +1,6 @@
 import sys
+sys.path.append("../Product")
+
 import unittest
 from random import shuffle
 from random import seed
@@ -7,7 +9,6 @@ from Board import Board
 from Game import Game
 import json
 
-sys.path.append("../Product")
 
 
 class TestInsertPiece(unittest.TestCase):
@@ -32,7 +33,7 @@ class TestInsertPiece(unittest.TestCase):
                     g.make_move((x + randint(-m, -2 * r), y + randint(-m, -2 * r)))
                     self.assertEqual(g.board.V[i].status, 0)
                 g.make_move((x + randint(-r, r), y + randint(-r, r)))
-                self.assertNotEqual(g.board.V[i].status, int(g.turn_player().pieces_to_insert == 0))
+                self.assertNotEqual(g.board.V[i].status, int(g.current_player().pieces_to_insert == 0))
 
 
 if __name__ == '__main__':
