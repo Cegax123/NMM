@@ -2,6 +2,7 @@ from turtle import pos
 import pygame.draw
 from Vertex import Vertex
 import json
+from text import Text
 
 with open('../Product/conf.json') as f:
     options = json.load(f)
@@ -12,6 +13,7 @@ with open('../Product/conf.json') as f:
 
 class Board:
     def __init__(self, n, vertices, edges):
+        self.n = n
         self.side = board_options['total'] / n
         self.V = [Vertex((x, y), self.side) for x, y in vertices]
         self.E = edges
@@ -39,6 +41,12 @@ class Board:
 
         for v in self.V:
             v.draw(surf)
+
+        alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+        for i in range(self.n+1):
+            Text(str(i+1), 40, 'verdana', [0, 0, 0]).draw(board_options['start_x']-100, board_options['end_y'] - i * self.side - 20, surf)
+            Text(alpha[i], 40, 'verdana', [0, 0, 0]).draw(board_options['start_x'] + self.side * i-12, board_options['end_y']+30, surf)
 
     def get_vertex(self, pos_mouse):
         for i in range(len(self.V)):
