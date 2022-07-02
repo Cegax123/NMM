@@ -3,3 +3,7 @@ __pycache__/
 .idea/
 Sprint1/Product/__pycache__/
 Sprint1/Test/__pycache__/
+
+Sprint1/.DS_Store
+Sprint2/.DS_Store
+Sprint3/.DS_Store
