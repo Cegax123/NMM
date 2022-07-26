@@ -2,11 +2,7 @@ import sys
 sys.path.append("../Product")
 
 import unittest
-from random import shuffle
-from random import seed
-from random import randint
 from Board import Board
-from Game import Game
 import json
 
 
