@@ -7,7 +7,7 @@ from Vertex import IVertex, Vertex
 
 class IBoard(ABC):
     @abstractmethod
-    def get_positions_adyacent_neighbors_of_pos(self, pos: tuple) -> List[tuple]:
+    def get_positions_empty_neighbors_of_pos(self, pos: tuple) -> List[tuple]:
         pass
 
     @abstractmethod
@@ -71,12 +71,13 @@ class Board(IBoard, ABC):
             if pos[0] < 0 or pos[0] >= self._rows or pos[1] < 0 or pos[1] >= self._cols:
                 raise Exception('Invalid position ' + str(pos) + ' in board')
 
-    def get_positions_adyacent_neighbors_of_pos(self, pos: tuple) -> List[tuple]:
+    def get_positions_empty_neighbors_of_pos(self, pos: tuple) -> List[tuple]:
         positions = []
         current_vertex = self._get_vertex_by_pos(pos)
 
         for vertex in current_vertex.neighbors:
-            positions.append(vertex.pos)
+            if vertex.is_empty():
+                positions.append(vertex.pos)
 
         return positions
 

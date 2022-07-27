@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import List
 from PieceColor import PieceColor
 from State import IState
 from InsertState import InsertState
@@ -38,14 +39,12 @@ class IPlayer(ABC):
     def pieces_in_board(self, int) -> None:
         pass
 
-    @property
     @abstractmethod
-    def state(self) -> IState:
+    def make_move(self) -> None:
         pass
 
-    @state.setter
     @abstractmethod
-    def state(self, state: IState) -> None:
+    def get_possible_moves(self) -> List[tuple]:
         pass
 
     @abstractmethod
@@ -61,5 +60,5 @@ class IPlayer(ABC):
         pass
 
 
-class FlyPlayer():
+class Player(IPlayer):
     pass
