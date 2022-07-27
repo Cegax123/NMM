@@ -1,17 +1,17 @@
 from abc import ABC, abstractmethod
 from typing import List
 from PieceColor import PieceColor
-from State import IState
-from InsertState import InsertState
-from SelectState import SelectState
-from MoveState import MoveState, FlyState
-from RemoveState import RemoveState
+from dataclasses import dataclass
 
 
 class IPlayer(ABC):
     @property
     @abstractmethod
     def enemy(self) -> 'IPlayer':
+        pass
+
+    @enemy.setter
+    def enemy(self, enemy: 'IPlayer') -> None:
         pass
 
     @property
@@ -60,5 +60,3 @@ class IPlayer(ABC):
         pass
 
 
-class Player(IPlayer):
-    pass
