@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import List
 from PieceColor import PieceColor
 from dataclasses import dataclass
+from PlayerType import PlayerType
 
 
 class IPlayer(ABC):
@@ -40,6 +41,14 @@ class IPlayer(ABC):
         pass
 
     @abstractmethod
+    def get_type(self) -> PlayerType:
+        pass
+
+    @abstractmethod
+    def set_type(self, player_type: PlayerType) -> None:
+        pass
+
+    @abstractmethod
     def make_move(self) -> None:
         pass
 
@@ -58,5 +67,4 @@ class IPlayer(ABC):
     @abstractmethod
     def won(self) -> None:
         pass
-
 

@@ -1,10 +1,11 @@
 from dataclasses import dataclass
 from typing import List
-from PieceColor import PieceColor
 import MoveSet
 import Player
 import Board
 
+
+@dataclass
 class DefaultMoveSet(MoveSet.IMoveSet):
     def __init__(self):
         self.insert_state = InsertState(self)
@@ -29,7 +30,7 @@ class DefaultMoveSet(MoveSet.IMoveSet):
 
 @dataclass
 class InsertState(MoveSet.State):
-    _rule_set: DefaultMoveSet
+    _move_set: DefaultMoveSet
 
     def get_possible_moves(self, player: Player.IPlayer, board: Board.IBoard) -> List[tuple]:
         return board.get_positions_empty_vertexes()
@@ -42,32 +43,52 @@ class InsertState(MoveSet.State):
         player.pieces_to_insert -= 1
 
         if board.check_mill_in_pos(pos):
-            self._rule_set.current_state = self._rule_set.remove_state
+            self._move_set.current_state = self._move_set.remove_state
 
         elif player.pieces_to_insert == 0:
-            self._rule_set.current_state = self._rule_set.select_state
+            self._move_set.current_state = self._move_set.select_state
             player.take_turn()
 
 
 @dataclass
 class SelectState(MoveSet.State):
-    _rule_set: DefaultMoveSet
+    _move_set: DefaultMoveSet
     _start_pos: tuple = (-1, -1)
 
     @property
     def start_pos(self) -> tuple:
         return self._start_pos
 
+    @start_pos.setter
+    def start_pos(self, start_pos: tuple) -> None:
+        self._start_pos = start_pos
+
     def get_possible_moves(self, player: Player.IPlayer, board: Board.IBoard) -> List[tuple]:
         return board.get_positions_with_color(player.color)
 
-    def _valid_move(self, pos: tuple, player: Player.IPlayer, board: Board.IBoard) -> bool:
+    def make_move(self, pos: tuple, player: Player.IPlayer, board: Board.IBoard) -> None:
+        if not self._valid_move(pos, player, board):
+            return
+
+        self._move_set.current_state = self._move_set.move_state
+
+
+@dataclass
+class MoveState(MoveSet.State):
+    _move_set: DefaultMoveSet
+
+    def get_possible_moves(self, player: Player.IPlayer, board: Board.IBoard) -> List[tuple]:
+        start_pos = self._move_set.select_state.start_pos
+        empty_adyacent = board.get_positions_empty_neighbors_of_pos(start_pos)
+        same_color = board.get_positions_with_color(player.color)
+        return empty_adyacent + same_color
+
+    def _valid_move(self, pos: tuple, player: Player.IPlayer, board: Board.IBoard):
         if not pos in self.get_possible_moves(player, board):
             return False
 
-        self._start_pos = pos
-
-        if player.color == board.get_color_from_pos(self._start_pos):
+        if board.get_color_from_pos(pos) == player.color:
+            self._move_set.select_state.start_pos = pos
             return False
 
         return True
@@ -76,28 +97,18 @@ class SelectState(MoveSet.State):
         if not self._valid_move(pos, player, board):
             return
 
-        self._rule_set.current_state = self._rule_set.move_state
-
-
-@dataclass
-class MoveState(MoveSet.State):
-    _rule_set: DefaultMoveSet
-
-    def get_possible_moves(self, player: Player.IPlayer, board: Board.IBoard) -> List[tuple]:
-        start_pos = self._rule_set.select_state.start_pos
-        return board.get_positions_empty_neighbors_of_pos(start_pos)
-
-    def make_move(self, pos: tuple, player: Player.IPlayer, board: Board.IBoard) -> None:
-        if not self._valid_move(pos, player, board):
-            return
-
-        start_pos = self._rule_set.select_state.start_pos
-        board.assign_color_in_pos(start_pos, PieceColor.EMPTY)
+        start_pos = self._move_set.select_state.start_pos
+        board.remove_piece_in_pos(start_pos)
         board.assign_color_in_pos(pos, player.color)
 
         if board.check_mill_in_pos(pos):
-            self._rule_set.current_state = self._rule_set.remove_state
+            self._move_set.current_state = self._move_set.remove_state
         else:
+            if player.pieces_to_insert > 0:
+                self._move_set.current_state = self._move_set.insert_state
+            else:
+                self._move_set.current_state = self._move_set.select_state
+
             player.take_turn()
 
 
@@ -106,14 +117,24 @@ class RemoveState(MoveSet.State):
     _rule_set: DefaultMoveSet
 
     def get_possible_moves(self, player: Player.IPlayer, board: Board.IBoard) -> List[tuple]:
-        return board.get_positions_with_color(player.enemy.color)
+        enemy_color_positions = board.get_positions_with_color(player.enemy.color)
+        possible_moves = []
+
+        for pos in enemy_color_positions:
+            if not board.check_mill_in_pos(pos):
+                possible_moves.append(pos)
+
+        if len(possible_moves) == 0:
+            possible_moves = enemy_color_positions
+
+        return possible_moves
 
     def make_move(self, pos: tuple, player: Player.IPlayer, board: Board.IBoard) -> None:
         if not self._valid_move(pos, player, board):
             return
 
         player.enemy.pieces_in_board -= 1
-        board.assign_color_in_pos(pos, PieceColor.EMPTY)
+        board.remove_piece_in_pos(pos)
 
         if player.enemy.check_lost():
             player.won()

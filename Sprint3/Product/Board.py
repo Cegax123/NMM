@@ -41,35 +41,14 @@ class IBoard(ABC):
 
 @dataclass
 class Board(IBoard, ABC):
-    _rows: int = 0
-    _cols: int = 0
-    _positions: List[tuple] = field(default_factory=list)
-    _edges: List[tuple] = field(default_factory=list)
-    _vertexes: List[IVertex] = field(default_factory=list)
+    def __init__(self, rows, cols, positions, edges):
+        self._rows = rows
+        self._cols = cols
 
-    @abstractmethod
-    def _define_positions(self) -> None:
-        """ Añade todas las posibles posiciones del tablero """
+        self._vertexes: List[IVertex] = []
 
-    @abstractmethod
-    def _define_edges(self) -> None:
-        """ Añade todos los vecinos de cada 'vertex' """
-
-    def __post_init__(self) -> None:
-        self._define_positions()
-        self._define_edges()
-
-        if self._rows < 0:
-            raise Exception('Invalid number of rows')
-
-        if self._cols < 0:
-            raise Exception('Invalid number of columns')
-
-        for vertex in self._vertexes:
-            pos = vertex.pos
-
-            if pos[0] < 0 or pos[0] >= self._rows or pos[1] < 0 or pos[1] >= self._cols:
-                raise Exception('Invalid position ' + str(pos) + ' in board')
+        self._add_vertexes_from_positions(positions)
+        self._add_neighbors_from_edges(edges)
 
     def get_positions_empty_neighbors_of_pos(self, pos: tuple) -> List[tuple]:
         positions = []
@@ -109,7 +88,11 @@ class Board(IBoard, ABC):
         return self._get_vertex_by_pos(pos).piece_color
 
     def valid_position(self, pos: tuple) -> bool:
-        return pos in self._positions
+        for vertex in self._vertexes:
+            if pos == vertex.pos:
+                return True
+
+        return False
 
     def check_mill_in_pos(self, pos: tuple) -> bool:
         return self._get_vertex_by_pos(pos).belong_to_mill()
@@ -123,52 +106,12 @@ class Board(IBoard, ABC):
 
         return result
 
-    def _add_vertexes_from_positions(self) -> None:
-        for pos in self._positions:
+    def _add_vertexes_from_positions(self, positions) -> None:
+        for pos in positions:
             self._vertexes.append(Vertex(pos))
 
-    def _add_neighbors_from_edges(self) -> None:
-        for v1, v2 in self._edges:
+    def _add_neighbors_from_edges(self, edges) -> None:
+        for v1, v2 in edges:
             self._vertexes[v1].add_neighbor(self._vertexes[v2])
             self._vertexes[v2].add_neighbor(self._vertexes[v1])
-
-
-class BoardThreeMenMorris(Board):
-    def _define_positions(self) -> None:
-        self._rows = 3
-        self._cols = 3
-
-        self._positions = [(0, 0), (0, 1), (0, 2),
-                           (1, 0), (1, 1), (1, 2),
-                           (2, 0), (2, 1), (2, 2)]
-
-        self._add_vertexes_from_positions()
-
-    def _define_edges(self) -> None:
-        self._edges = [(0, 1), (1, 2), (3, 4), (4, 5), (6, 7), (7, 8),
-                       (0, 3), (0, 6), (1, 4), (4, 7), (2, 5), (5, 6),
-                       (0, 4), (4, 8), (2, 4), (4, 6)]
-
-        self._add_neighbors_from_edges()
-
-
-class BoardNineMenMorris(Board):
-    def _define_positions(self) -> None:
-        self._rows = 5
-        self._cols = 5
-
-        self._positions = [(0, 0), (0, 2), (0, 4), (1, 1), (1, 2), (1, 3),
-                           (2, 0), (2, 1), (2, 3), (2, 4),
-                           (3, 1), (3, 2), (3, 3), (4, 0), (4, 2), (4, 4)]
-
-        self._add_vertexes_from_positions()
-
-    def _define_edges(self) -> None:
-        self._edges = [(0, 1), (1, 2), (3, 4), (4, 5), (6, 7), (8, 9),
-                       (10, 11), (11, 12), (13, 14), (14, 15),
-                       (0, 6), (6, 13), (3, 7), (7, 10), (1, 4),
-                       (11, 14), (5, 8), (8, 12), (2, 9), (9, 15)]
-
-        self._add_neighbors_from_edges()
-
 

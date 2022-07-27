@@ -36,7 +36,7 @@ class IState(ABC):
 
 @dataclass
 class State(IState, ABC):
-    _rule_set = IMoveSet
+    _move_set = IMoveSet
 
     @abstractmethod
     def get_possible_moves(self, player: Player.IPlayer, board: Board.IBoard) -> List[tuple]:
