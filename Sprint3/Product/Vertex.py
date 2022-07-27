@@ -59,6 +59,7 @@ class Vertex(IVertex):
     def piece_color(self, piece_color) -> None:
         self._piece_color = piece_color
 
+
     def add_neighbor(self, neighbor: IVertex) -> None:
         self._neighbors.append(neighbor)
 
