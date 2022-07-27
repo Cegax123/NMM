@@ -1,45 +1,96 @@
-import pygame.draw
-import json
-
-with open('../Product/conf.json') as f:
-    options = json.load(f)
-    board_options = options['board']
-
-    BOARD_START_X = board_options['start_x']
-    BOARD_START_Y = board_options['start_y']
-    BOARD_END_X = board_options['end_x']
-    BOARD_END_Y = board_options['end_y']
-
-    f.close()
+from abc import ABC, abstractmethod
+from dataclasses import dataclass, field
+from typing import List
+from PieceColor import PieceColor
 
 
-class Vertex:
-    def __init__(self, pos_board, side):
-        self.pos_board = pos_board
-        self.pos_screen = (BOARD_START_X + side * pos_board[0], BOARD_START_Y + side * pos_board[1])
-        self.status = 0  # 'empty'  # 'black', 'white'
-        self.color = board_options['vertex_color']
-        self.radius = board_options['radius_empty_vertex']
-        self.border = None
+class IVertex(ABC):
+    @property
+    @abstractmethod
+    def pos(self) -> tuple:
+        pass
 
-    def draw(self, surf):
-        if self.status == 0:
-            scale = 1
-        else:
-            scale = 2
-        
-        if self.border: pygame.draw.circle(surf, board_options[self.border], self.pos_screen, (scale + 0.5) * self.radius)
-        pygame.draw.circle(surf, self.color, self.pos_screen, self.radius * scale)
+    @abstractmethod
+    def is_empty(self) -> bool:
+        pass
 
-    def clicked(self, pos_mouse):
-        mx,my = pos_mouse
-        px,py = self.pos_screen
-        return (py-my)*(py-my) + (px-mx)*(px-mx) < 4*self.radius*self.radius
+    @property
+    @abstractmethod
+    def piece_color(self) -> PieceColor:
+        pass
 
-    def update(self, player = None):
-        if player:
-            self.status = player.turn
-            self.color = player.color_piece
-        else:
-            self.status = 0
-            self.color = board_options['vertex_color']
+    @piece_color.setter
+    @abstractmethod
+    def piece_color(self, piece_color) -> None:
+        pass
+
+    @abstractmethod
+    def add_neighbor(self, neighbor: 'IVertex') -> None:
+        pass
+
+    @property
+    @abstractmethod
+    def neighbors(self) -> List['IVertex']:
+        pass
+
+    @abstractmethod
+    def belong_to_mill(self) -> bool:
+        pass
+
+
+@dataclass
+class Vertex(IVertex):
+    _pos: tuple
+    _piece_color: PieceColor = PieceColor.EMPTY
+    _neighbors: List[IVertex] = field(default_factory=list)
+
+    @property
+    def pos(self) -> tuple:
+        return self._pos
+
+    def is_empty(self) -> bool:
+        return self._piece_color == PieceColor.EMPTY
+
+    @property
+    def piece_color(self) -> PieceColor:
+        return self._piece_color
+
+    @piece_color.setter
+    def piece_color(self, piece_color) -> None:
+        self._piece_color = piece_color
+
+    def add_neighbor(self, neighbor: IVertex) -> None:
+        self._neighbors.append(neighbor)
+
+    @property
+    def neighbors(self) -> List[IVertex]:
+        return self._neighbors
+
+    @staticmethod
+    def are_collinear(v1: IVertex, v2: IVertex, v3: IVertex):
+        check_0 = v2.pos[0] - v1.pos[0] == v3.pos[0] - v2.pos[0]
+        check_1 = v2.pos[1] - v1.pos[1] == v3.pos[1] - v2.pos[1]
+
+        return check_0 and check_1
+
+    def belong_to_mill(self) -> bool:
+        for v1 in self.neighbors:
+            for v2 in self.neighbors:
+                if v1 == v2: continue
+                if not self.piece_color == v1.piece_color == v2.piece_color:
+                    continue
+
+                if Vertex.are_collinear(v1, self, v2):
+                    return True
+
+        for v1 in self.neighbors:
+            for v2 in v1.neighbors:
+                if v2 == self: continue
+                if not self.piece_color == v1.piece_color == v2.piece_color:
+                    continue
+
+                if Vertex.are_collinear(self, v1, v2):
+                    return True
+
+        return False
+

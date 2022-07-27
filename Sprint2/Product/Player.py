@@ -31,14 +31,14 @@ class Player:
             self.status = 'move'
         else:
             self.status = 'fly'
-    
+
     def remove_update(self):
         self.pieces_in_board -= 1
         if self.pieces_to_insert== 0:
             self.status = 'select'
         else:
             self.status = 'insert'
-    
+
     def update(self):
         if self.pieces_to_insert == 0:
             self.status = 'select'

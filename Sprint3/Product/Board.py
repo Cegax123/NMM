@@ -1,199 +1,174 @@
-from turtle import pos
-import pygame.draw
-from Vertex import Vertex
-import json
-from text import Text
-
-with open('../Product/conf.json') as f:
-    options = json.load(f)
-    board_options = options['board']
-
-    f.close()
+from abc import ABC, abstractmethod
+from dataclasses import dataclass, field
+from typing import List
+from PieceColor import PieceColor
+from Vertex import IVertex, Vertex
 
 
-class Board:
-    def __init__(self, n, vertices, edges):
-        self.n = n
-        self.side = board_options['total'] / n
-        self.V = [Vertex((x, y), self.side) for x, y in vertices]
-        self.E = edges
-        self.adj = {}
+class IBoard(ABC):
+    @abstractmethod
+    def get_positions_empty_neighbors_of_pos(self, pos: tuple) -> List[tuple]:
+        pass
 
-        for v in range(len(self.V)):
-            self.adj[v] = []
+    @abstractmethod
+    def get_positions_empty_vertexes(self) -> List[tuple]:
+        pass
 
-        for e in self.E:
-            self.adj[e[0]].append(e[1])
-            self.adj[e[1]].append(e[0])
+    @abstractmethod
+    def get_positions_with_color(self, piece_color: PieceColor) -> List[tuple]:
+        pass
 
-        self.message_in_screen = {
-            'insert': 'Inserte una pieza en alguna casilla vacia',
-            'to_select': 'Seleccione una pieza a mover',
-            'selected': 'Seleccione una casilla vacia como destino',
-            'to_remove': 'Escoja una pieza del oponente a eliminar'
-        }
+    @abstractmethod
+    def assign_color_in_pos(self, pos: tuple, piece_color: PieceColor) -> None:
+        pass
 
-        self.selected_piece = None
+    @abstractmethod
+    def remove_piece_in_pos(self, pos: tuple) -> None:
+        pass
 
-    def draw(self, surf):
-        for e in self.E:
-            pygame.draw.line(surf, board_options['edge_color'], self.V[e[0]].pos_screen, self.V[e[1]].pos_screen)
+    @abstractmethod
+    def get_color_from_pos(self, pos: tuple) -> PieceColor:
+        pass
 
-        for v in self.V:
-            v.draw(surf)
+    @abstractmethod
+    def valid_position(self, pos: tuple) -> bool:
+        pass
 
-        alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    @abstractmethod
+    def check_mill_in_pos(self, pos: tuple) -> bool:
+        pass
 
-        for i in range(self.n+1):
-            Text(str(i+1), 40, 'verdana', [0, 0, 0]).draw(board_options['start_x']-100, board_options['end_y'] - i * self.side - 20, surf)
-            Text(alpha[i], 40, 'verdana', [0, 0, 0]).draw(board_options['start_x'] + self.side * i-12, board_options['end_y']+30, surf)
 
-    def get_vertex(self, pos_mouse):
-        for i in range(len(self.V)):
-            if self.V[i].clicked(pos_mouse):
-                return i
-        return -1
+@dataclass
+class Board(IBoard, ABC):
+    _rows: int = 0
+    _cols: int = 0
+    _positions: List[tuple] = field(default_factory=list)
+    _edges: List[tuple] = field(default_factory=list)
+    _vertexes: List[IVertex] = field(default_factory=list)
 
-    def update_border_vertex(self, player):
-        for v in self.V:
-            v.border = None
-        pos_remove=self.get_posible_takes(player)
+    @abstractmethod
+    def _define_positions(self) -> None:
+        """ Añade todas las posibles posiciones del tablero """
 
-        for id, v in enumerate(self.V):
-            '''if player.status == 'select':
-                if v.status == player.turn:
-                    v.border = 'target_piece' '''
+    @abstractmethod
+    def _define_edges(self) -> None:
+        """ Añade todos los vecinos de cada 'vertex' """
 
-            if player.status == 'move':
-                if id == player.selected_id:
-                    v.border = 'selected_piece'
-                elif id in self.adj[player.selected_id] and v.status == 0:
-                    v.border = 'target_piece'
+    def __post_init__(self) -> None:
+        self._define_positions()
+        self._define_edges()
 
-            elif player.status == 'fly':
-                if id == player.selected_id:
-                    v.border = 'selected_piece'
-                elif v.status == 0:
-                    v.border = 'target_piece'
+        if self._rows < 0:
+            raise Exception('Invalid number of rows')
 
-            elif player.status == 'remove':
-                if v.status != 0 and id in pos_remove:
-                    v.border = 'remove_piece'
+        if self._cols < 0:
+            raise Exception('Invalid number of columns')
 
-    def colinear(self, u, v, w): #verifica si 3 vertices son colineares
-        diag1 = self.V[u].pos_board[0] - self.V[u].pos_board[1] == self.V[v].pos_board[0] - self.V[v].pos_board[1] == self.V[w].pos_board[0] - self.V[w].pos_board[1]
-        diag2 = self.V[u].pos_board[0] + self.V[u].pos_board[1] == self.V[v].pos_board[0] + self.V[v].pos_board[1] == self.V[w].pos_board[0] + self.V[w].pos_board[1]
-        row = self.V[u].pos_board[0] == self.V[v].pos_board[0] and self.V[v].pos_board[0] == self.V[w].pos_board[0]
-        column = self.V[u].pos_board[1] == self.V[v].pos_board[1] and self.V[v].pos_board[1] == self.V[w].pos_board[1]
-        return row or column or diag1 or diag2
+        for vertex in self._vertexes:
+            pos = vertex.pos
 
-    def verify_mill(self, id_vertex): #verifica si hay un mill 
-        status = self.V[id_vertex].status
-        for u in self.adj[id_vertex]:
-            if self.V[u].status != status:
-                continue
-            for v in self.adj[id_vertex]:
-                if(u==v or self.V[v].status!=status):
-                    continue
-                if self.colinear(u,id_vertex,v):
-                    return True
-        for u in self.adj[id_vertex]:
-            if self.V[u].status != status:
-                continue
-            for v in self.adj[u]:
-                if(v==id_vertex or self.V[v].status!=status):
-                    continue
-                if self.colinear(id_vertex,u,v):
-                    return True
-        return False
+            if pos[0] < 0 or pos[0] >= self._rows or pos[1] < 0 or pos[1] >= self._cols:
+                raise Exception('Invalid position ' + str(pos) + ' in board')
 
-    def get_posible_takes(self, player):
-        pos_moves = []
-        for i in range(len(self.V)):
-            if self.V[i].status==3-player.turn and not self.verify_mill(i):
-                pos_moves.append(i)
-        if len(pos_moves)==0:
-            for i in range(len(self.V)):
-                if self.V[i].status==3-player.turn:
-                    pos_moves.append(i)
-        return pos_moves
+    def get_positions_empty_neighbors_of_pos(self, pos: tuple) -> List[tuple]:
+        positions = []
+        current_vertex = self._get_vertex_by_pos(pos)
 
-    def insert_piece(self, player, id_vertex):
-        if id_vertex != -1 and self.V[id_vertex].status == 0 and player.pieces_to_insert > 0:
-            self.V[id_vertex].update(player)
-            player.insert_update()
-            if self.verify_mill(id_vertex):
-                change_turn = False
-                player.status = 'remove'
-            else:
-                change_turn = True
-        else:
-            change_turn = False
+        for vertex in current_vertex.neighbors:
+            if vertex.is_empty():
+                positions.append(vertex.pos)
 
-        return change_turn
+        return positions
 
-    def remove_piece(self, player, enemy, id_vertex):
-        pos_remove=self.get_posible_takes(player)
-        if id_vertex != -1 and id_vertex in pos_remove:
-            self.V[id_vertex].update()
-            player.update()
-            enemy.remove_update()
-            change_turn = True
-        else:
-            change_turn = False
+    def get_positions_empty_vertexes(self) -> List[tuple]:
+        positions = []
 
-        return change_turn
+        for vertex in self._vertexes:
+            if vertex.is_empty():
+                positions.append(vertex.pos)
 
-    def select_piece(self, player, id_vertex):
-        if id_vertex !=-1 and self.V[id_vertex].status == player.turn:
-            player.select_update(id_vertex)
-            #poner posibles movimientos
-            
+        return positions
 
-    def move_piece(self, player, id_vertex):
-        if id_vertex == player.selected_id: #te mueves al mismo lugar
-            player.update()
-            change_turn = False
+    def get_positions_with_color(self, piece_color: PieceColor) -> List[tuple]:
+        positions = []
 
-        elif self.V[id_vertex].status == player.turn: #te mueves a diferente lugar pero mismo color
-            
-            self.select_piece(player, id_vertex)
-            change_turn = False
+        for vertex in self._vertexes:
+            if vertex == piece_color:
+                positions.append(vertex.pos)
 
-        elif id_vertex in self.adj[player.selected_id] and self.V[id_vertex].status == 0: #te mueves a una posicion vacia correcta
-            self.V[player.selected_id].update()
-            self.V[id_vertex].update(player)
-            player.update()
-            if self.verify_mill(id_vertex):
-                change_turn = False
-                player.status = 'remove'
-            else:
-                change_turn = True
-        else:
-            change_turn = False
-            
-        return change_turn        
+        return positions
 
-    def fly_piece(self, player, id_vertex):
-        if id_vertex != -1:
-            if id_vertex == player.selected_id:
-                player.update()
-                change_turn = False
-            elif self.V[id_vertex].status == player.turn:
-                self.select_piece(player, id_vertex)
-                change_turn = False
-            elif self.V[id_vertex].status == 0:
-                self.V[player.selected_id].update()
-                self.V[id_vertex].update(player)
-                player.update()
-                if self.verify_mill(id_vertex):
-                    change_turn = False
-                    player.status = 'remove'
-                else:
-                    change_turn = True
-            else:
-                change_turn = False
-        else:
-            change_turn = False
-            
-        return change_turn
+    def assign_color_in_pos(self, pos: tuple, piece_color: PieceColor) -> None:
+        self._get_vertex_by_pos(pos).piece_color = piece_color
+
+    def remove_piece_in_pos(self, pos: tuple) -> None:
+        self._get_vertex_by_pos(pos).piece_color = PieceColor.EMPTY
+
+    def get_color_from_pos(self, pos: tuple) -> PieceColor:
+        return self._get_vertex_by_pos(pos).piece_color
+
+    def valid_position(self, pos: tuple) -> bool:
+        return pos in self._positions
+
+    def check_mill_in_pos(self, pos: tuple) -> bool:
+        return self._get_vertex_by_pos(pos).belong_to_mill()
+
+    def _get_vertex_by_pos(self, pos: tuple) -> IVertex:
+        result = self._vertexes[0]
+
+        for vertex in self._vertexes:
+            if pos == vertex.pos:
+                result = vertex
+
+        return result
+
+    def _add_vertexes_from_positions(self) -> None:
+        for pos in self._positions:
+            self._vertexes.append(Vertex(pos))
+
+    def _add_neighbors_from_edges(self) -> None:
+        for v1, v2 in self._edges:
+            self._vertexes[v1].add_neighbor(self._vertexes[v2])
+            self._vertexes[v2].add_neighbor(self._vertexes[v1])
+
+
+class BoardThreeMenMorris(Board):
+    def _define_positions(self) -> None:
+        self._rows = 3
+        self._cols = 3
+
+        self._positions = [(0, 0), (0, 1), (0, 2),
+                           (1, 0), (1, 1), (1, 2),
+                           (2, 0), (2, 1), (2, 2)]
+
+        self._add_vertexes_from_positions()
+
+    def _define_edges(self) -> None:
+        self._edges = [(0, 1), (1, 2), (3, 4), (4, 5), (6, 7), (7, 8),
+                       (0, 3), (0, 6), (1, 4), (4, 7), (2, 5), (5, 6),
+                       (0, 4), (4, 8), (2, 4), (4, 6)]
+
+        self._add_neighbors_from_edges()
+
+
+class BoardNineMenMorris(Board):
+    def _define_positions(self) -> None:
+        self._rows = 5
+        self._cols = 5
+
+        self._positions = [(0, 0), (0, 2), (0, 4), (1, 1), (1, 2), (1, 3),
+                           (2, 0), (2, 1), (2, 3), (2, 4),
+                           (3, 1), (3, 2), (3, 3), (4, 0), (4, 2), (4, 4)]
+
+        self._add_vertexes_from_positions()
+
+    def _define_edges(self) -> None:
+        self._edges = [(0, 1), (1, 2), (3, 4), (4, 5), (6, 7), (8, 9),
+                       (10, 11), (11, 12), (13, 14), (14, 15),
+                       (0, 6), (6, 13), (3, 7), (7, 10), (1, 4),
+                       (11, 14), (5, 8), (8, 12), (2, 9), (9, 15)]
+
+        self._add_neighbors_from_edges()
+
+
