@@ -97,3 +97,4 @@ class Vertex(IVertex):
 
         return False
 
+

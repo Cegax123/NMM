@@ -58,6 +58,7 @@ class IBoard(ABC):
     def edges(self) -> List[tuple]:
         pass
 
+
 @dataclass
 class Board(IBoard, ABC):
     def __init__(self, rows, cols, positions, edges):

@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 import Board
 import Player
+import Game
 
 
 class IMoveSet(ABC):
@@ -17,21 +18,21 @@ class IMoveSet(ABC):
         pass
 
     @abstractmethod
-    def make_move(self, pos: tuple, player: Player.IPlayer, board: Board.IBoard) -> None:
+    def get_possible_moves(self, game_state: Game.GameState) -> List[tuple]:
         pass
 
     @abstractmethod
-    def get_possible_moves(self, player: Player.IPlayer, board: Board.IBoard) -> List[tuple]:
+    def make_move(self, pos: tuple, game_state: Game.GameState) -> None:
         pass
 
 
 class IState(ABC):
     @abstractmethod
-    def get_possible_moves(self, player: Player.IPlayer, board: Board.IBoard) -> List[tuple]:
+    def get_possible_moves(self, game_state: Game.GameState) -> List[tuple]:
         pass
 
     @abstractmethod
-    def make_move(self, pos: tuple, player: Player.IPlayer, board: Board.IBoard) -> None:
+    def make_move(self, pos: tuple, game_state: Game.GameState) -> None:
         pass
 
 
@@ -40,14 +41,14 @@ class State(IState, ABC):
     _move_set = IMoveSet
 
     @abstractmethod
-    def get_possible_moves(self, player: Player.IPlayer, board: Board.IBoard) -> List[tuple]:
+    def get_possible_moves(self, game_state: Game.GameState) -> List[tuple]:
         pass
 
     @abstractmethod
-    def make_move(self, pos: tuple, player: Player.IPlayer, board: Board.IBoard) -> None:
+    def make_move(self, pos: tuple, game_state: Game.GameState) -> None:
         pass
 
-    def _valid_move(self, pos: tuple, player: Player.IPlayer, board: Board.IBoard) -> bool:
-        return pos in self.get_possible_moves(player, board)
+    def _valid_move(self, pos: tuple, game_state: Game.GameState) -> bool:
+        return pos in self.get_possible_moves(game_state)
 
 

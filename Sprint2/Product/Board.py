@@ -148,7 +148,6 @@ class Board:
         if id_vertex !=-1 and self.V[id_vertex].status == player.turn:
             player.select_update(id_vertex)
             #poner posibles movimientos
-            
 
     def move_piece(self, player, id_vertex):
         if id_vertex == player.selected_id: #te mueves al mismo lugar

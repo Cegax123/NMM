@@ -1,23 +1,11 @@
 from abc import ABC, abstractmethod
-from typing import List
 from PieceColor import PieceColor
 from dataclasses import dataclass
 from PlayerType import PlayerType
-import Board
 
 
 @dataclass
 class IPlayer(ABC):
-    @property
-    @abstractmethod
-    def enemy(self) -> 'IPlayer':
-        pass
-
-    @enemy.setter
-    @abstractmethod
-    def enemy(self, enemy: 'IPlayer') -> None:
-        pass
-
     @property
     @abstractmethod
     def start_pos(self) -> tuple:
@@ -62,35 +50,15 @@ class IPlayer(ABC):
         pass
 
     @abstractmethod
-    def make_move(self, pos: tuple, board: Board.IBoard) -> None:
-        pass
-
-    @abstractmethod
-    def get_possible_moves(self, board: Board.IBoard) -> List[tuple]:
-        pass
-
-    @abstractmethod
-    def take_turn(self) -> None:
-        pass
-
-    @abstractmethod
     def check_lost(self) -> bool:
         pass
 
-    @abstractmethod
-    def won(self) -> None:
-        pass
-
-    @abstractmethod
-    def set_game_state(self, game_state) -> None:
-        pass
 
 class HumanPlayer(IPlayer):
-    def __init__(self, color: PieceColor, pieces_to_insert: int, move_set):
+    def __init__(self, color: PieceColor, pieces_to_insert: int):
         self._color = color
         self._pieces_in_board = 0
         self._pieces_to_insert = pieces_to_insert
-        self._move_set = move_set
         self._start_pos = (-1, -1)
 
         self._type = PlayerType.HUMAN
@@ -98,14 +66,6 @@ class HumanPlayer(IPlayer):
     @property
     def type(self) -> PlayerType:
         return self._type
-
-    @property
-    def enemy(self):
-        return self._enemy
-
-    @enemy.setter
-    def enemy(self, enemy):
-        self._enemy = enemy
 
     @property
     def color(self):
@@ -141,20 +101,6 @@ class HumanPlayer(IPlayer):
     def set_type(self, player_type):
         self._type = player_type
 
-    def make_move(self, pos, board):
-        self._move_set.make_move(pos=pos, player=self, board=board)
-
-    def get_possible_moves(self, board):
-        return self._move_set.get_possible_moves(self, board)
-
     def check_lost(self) -> bool:
         return self._pieces_to_insert + self._pieces_in_board < 3
 
-    def won(self) -> None:
-        self._game_state.end_game()
-
-    def take_turn(self):
-        self._game_state.change_turn()
-
-    def set_game_state(self, game_state):
-        self._game_state = game_state
