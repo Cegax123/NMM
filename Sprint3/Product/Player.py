@@ -14,6 +14,7 @@ class IPlayer(ABC):
         pass
 
     @enemy.setter
+    @abstractmethod
     def enemy(self, enemy: 'IPlayer') -> None:
         pass
 
@@ -80,14 +81,16 @@ class IPlayer(ABC):
     def won(self) -> None:
         pass
 
+    @abstractmethod
+    def set_game_state(self, game_state) -> None:
+        pass
 
 class HumanPlayer(IPlayer):
-    def __init__(self, color: PieceColor, pieces_to_insert: int, move_set, game_state):
+    def __init__(self, color: PieceColor, pieces_to_insert: int, move_set):
         self._color = color
         self._pieces_in_board = 0
         self._pieces_to_insert = pieces_to_insert
         self._move_set = move_set
-        self._game_state = game_state
         self._start_pos = (-1, -1)
 
         self._type = PlayerType.HUMAN
@@ -153,7 +156,5 @@ class HumanPlayer(IPlayer):
     def take_turn(self):
         self._game_state.change_turn()
 
-    def print_state(self):
-        self._move_set.current_state.print_state()
-
-
+    def set_game_state(self, game_state):
+        self._game_state = game_state

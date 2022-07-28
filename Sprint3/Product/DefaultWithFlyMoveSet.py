@@ -6,16 +6,16 @@ import Board
 
 
 class DefaultRulesWithFly(DefaultMoveSet.DefaultMoveSet):
-    def __init__(self, threshold_fly):
+    def __init__(self, threshold_fly: int):
         super().__init__()
         self.select_state = SelectWithFlyState(self, threshold_fly)
         self.fly_state = FlyState(self)
 
 
-@dataclass
 class SelectWithFlyState(DefaultMoveSet.SelectState):
-    _move_set: DefaultRulesWithFly
-    _threshold_fly: int
+    def __init__(self, move_set: DefaultRulesWithFly, threshold_fly):
+        self._move_set = move_set
+        self._threshold_fly = threshold_fly
 
     def make_move(self, pos: tuple, player: Player.IPlayer, board: Board.IBoard) -> None:
         if not self._valid_move(pos, player, board):

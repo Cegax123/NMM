@@ -110,7 +110,7 @@ class MoveState(MoveSet.State):
 
 @dataclass
 class RemoveState(MoveSet.State):
-    _rule_set: DefaultMoveSet
+    _move_set: DefaultMoveSet
 
     def get_possible_moves(self, player: Player.IPlayer, board: Board.IBoard) -> List[tuple]:
         enemy_color_positions = board.get_positions_with_color(player.enemy.color)
@@ -136,9 +136,9 @@ class RemoveState(MoveSet.State):
             player.won()
         else:
             if player.pieces_to_insert > 0:
-                self._rule_set.current_state = self._rule_set.insert_state
+                self._move_set.current_state = self._move_set.insert_state
             else:
-                self._rule_set.current_state = self._rule_set.select_state
+                self._move_set.current_state = self._move_set.select_state
 
             player.take_turn()
 

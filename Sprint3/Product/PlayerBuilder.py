@@ -20,10 +20,6 @@ class IPlayerBuilder(ABC):
         pass
 
     @abstractmethod
-    def set_game_state(self, game_state) -> None:
-        pass
-
-    @abstractmethod
     def get_result(self) -> Player.IPlayer:
         pass
 
@@ -38,11 +34,8 @@ class HumanPlayerBuilder(IPlayerBuilder):
     def set_move_set(self, move_set) -> None:
         self._move_set = move_set
 
-    def set_game_state(self, game_state) -> None:
-        self._game_state = game_state
-
     def get_result(self) -> Player.IPlayer:
-        return Player.HumanPlayer(self._color, self._pieces_to_insert, self._move_set, self._game_state)
+        return Player.HumanPlayer(self._color, self._pieces_to_insert, self._move_set)
 
 
 @dataclass
@@ -55,19 +48,17 @@ class PlayerDirector:
     def builder(self, builder) -> None:
         self._builder = builder
 
-    def build_three_men_morris_player(self, color: PieceColor, game_state) -> Player.IPlayer:
+    def build_three_men_morris_player(self, color: PieceColor) -> Player.IPlayer:
         self._builder.set_color(color)
         self._builder.set_pieces_to_insert(3)
         self._builder.set_move_set(DefaultMoveSet.DefaultMoveSet())
-        self._builder.set_game_state(game_state)
 
         return self._builder.get_result()
 
-    def build_nine_men_morris_player(self, color: PieceColor, game_state) -> Player.IPlayer:
+    def build_nine_men_morris_player(self, color: PieceColor) -> Player.IPlayer:
         self._builder.set_color(color)
         self._builder.set_pieces_to_insert(9)
         self._builder.set_move_set(DefaultWithFlyMoveSet.DefaultRulesWithFly(3))
-        self._builder.set_game_state(game_state)
 
         return self._builder.get_result()
 

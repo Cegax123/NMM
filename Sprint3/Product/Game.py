@@ -1,22 +1,19 @@
-import PlayerBuilder
-import BoardBuilder
-from PieceColor import PieceColor
-from BoardVariant import BoardVariant
+import Player
+import Board
 
 
-class Game:
-    def __init__(self):
-        player_builder = PlayerBuilder.HumanPlayerBuilder()
-        player_director = PlayerBuilder.PlayerDirector()
-        player_director.builder = player_builder
+class GameState:
+    def __init__(self, p1: Player.IPlayer, p2: Player.IPlayer, board: Board.IBoard):
+        self.player1 = p1
+        self.player2 = p2
 
-        self.p1 = player_director.build_three_men_morris_player(PieceColor.WHITE, self)
-        self.p2 = player_director.build_three_men_morris_player(PieceColor.BLACK, self)
+        self.player1.enemy = self.player2
+        self.player2.enemy = self.player1
 
-        self.p1.enemy = self.p2
-        self.p2.enemy = self.p1
+        self.player1.set_game_state(self)
+        self.player2.set_game_state(self)
 
-        self.board = BoardBuilder.BoardDirector().build_board(BoardVariant.THREE_MEN_MORRIS)
+        self.board = board
 
         self.turn = 0
         self.running = True
@@ -30,8 +27,8 @@ class Game:
     @property
     def current_player(self):
         if self.turn == 0:
-            return self.p1
+            return self.player1
         else:
-            return self.p2
+            return self.player2
 
 
