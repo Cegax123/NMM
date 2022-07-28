@@ -16,7 +16,7 @@ class IMoveSet(ABC):
         pass
 
     @abstractmethod
-    def make_move(self, pos: tuple, board: Board.IBoard) -> None:
+    def make_move(self, pos: tuple, player: Player.IPlayer, board: Board.IBoard) -> None:
         pass
 
     @abstractmethod

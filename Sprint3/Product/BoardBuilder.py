@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from typing import List
 from BoardVariant import BoardVariant
 import Board
@@ -20,21 +21,18 @@ class BoardBuilder:
         return Board.Board(self._rows, self._cols, self._positions, self._edges)
 
 
+@dataclass
 class BoardDirector:
-    @property
-    def builder(self) -> BoardBuilder:
-        return self._builder
+    _builder: BoardBuilder = BoardBuilder()
 
-    @builder.setter
-    def builder(self, builder: BoardBuilder):
-        self._builder = builder
-
-    def build_board(self, game_variant: BoardVariant) -> None:
+    def build_board(self, game_variant: BoardVariant) -> Board.IBoard:
         if game_variant == BoardVariant.THREE_MEN_MORRIS:
             self.build_three_men_morris_board()
 
         elif game_variant == BoardVariant.NINE_MEN_MORRIS:
-            self.build_nine_men_morris()
+            self.build_nine_men_morris_board()
+
+        return self._builder.get_result()
 
     def build_three_men_morris_board(self):
         self._builder.set_rows(3)
@@ -52,7 +50,7 @@ class BoardDirector:
 
         self._builder.set_edges(edges)
 
-    def build_nine_men_morris(self):
+    def build_nine_men_morris_board(self):
         self._builder.set_rows(5)
         self._builder.set_cols(5)
 

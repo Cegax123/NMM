@@ -74,6 +74,9 @@ class Vertex(IVertex):
         return check_0 and check_1
 
     def belong_to_mill(self) -> bool:
+        if self.is_empty():
+            return False
+
         for v1 in self.neighbors:
             for v2 in self.neighbors:
                 if v1 == v2: continue

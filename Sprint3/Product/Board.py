@@ -3,6 +3,7 @@ from dataclasses import dataclass, field
 from typing import List
 from PieceColor import PieceColor
 from Vertex import IVertex, Vertex
+import pprint
 
 
 class IBoard(ABC):
@@ -38,6 +39,9 @@ class IBoard(ABC):
     def check_mill_in_pos(self, pos: tuple) -> bool:
         pass
 
+    @abstractmethod
+    def print_board(self) -> None:
+        pass
 
 @dataclass
 class Board(IBoard, ABC):
@@ -73,7 +77,7 @@ class Board(IBoard, ABC):
         positions = []
 
         for vertex in self._vertexes:
-            if vertex == piece_color:
+            if vertex.piece_color == piece_color:
                 positions.append(vertex.pos)
 
         return positions
@@ -115,3 +119,15 @@ class Board(IBoard, ABC):
             self._vertexes[v1].add_neighbor(self._vertexes[v2])
             self._vertexes[v2].add_neighbor(self._vertexes[v1])
 
+    def print_board(self):
+        b = [[0 for _ in range(self._cols)] for _ in range(self._rows)]
+
+        for vertex in self._vertexes:
+            x, y = vertex.pos
+
+            if vertex.piece_color == PieceColor.BLACK:
+                b[x][y] = 2
+            elif vertex.piece_color == PieceColor.WHITE:
+                b[x][y] = 1
+
+        pprint.pprint(b)
