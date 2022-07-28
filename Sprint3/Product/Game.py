@@ -3,6 +3,7 @@ import BoardBuilder
 from PieceColor import PieceColor
 from BoardVariant import BoardVariant
 
+
 class Game:
     def __init__(self):
         player_builder = PlayerBuilder.HumanPlayerBuilder()

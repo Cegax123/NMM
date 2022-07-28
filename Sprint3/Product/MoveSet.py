@@ -4,6 +4,7 @@ from dataclasses import dataclass
 import Board
 import Player
 
+
 class IMoveSet(ABC):
     @property
     @abstractmethod
@@ -20,7 +21,7 @@ class IMoveSet(ABC):
         pass
 
     @abstractmethod
-    def get_possible_moves(self, board: Board.IBoard) -> List[tuple]:
+    def get_possible_moves(self, player: Player.IPlayer, board: Board.IBoard) -> List[tuple]:
         pass
 
 

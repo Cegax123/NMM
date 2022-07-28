@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from PieceColor import PieceColor
 import Player
 import DefaultMoveSet
+import DefaultWithFlyMoveSet
 
 
 class IPlayerBuilder(ABC):
@@ -65,7 +66,7 @@ class PlayerDirector:
     def build_nine_men_morris_player(self, color: PieceColor, game_state) -> Player.IPlayer:
         self._builder.set_color(color)
         self._builder.set_pieces_to_insert(9)
-        self._builder.set_move_set(DefaultMoveSet.DefaultRulesWithFly(3))
+        self._builder.set_move_set(DefaultWithFlyMoveSet.DefaultRulesWithFly(3))
         self._builder.set_game_state(game_state)
 
         return self._builder.get_result()
