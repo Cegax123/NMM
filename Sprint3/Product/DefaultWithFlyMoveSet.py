@@ -12,10 +12,11 @@ class DefaultRulesWithFly(DefaultMoveSet.DefaultMoveSet):
         self.fly_state = FlyState(self)
 
 
+@dataclass
 class SelectWithFlyState(DefaultMoveSet.SelectState):
-    def __init__(self, move_set: DefaultRulesWithFly, threshold_fly):
-        self._move_set = move_set
-        self._threshold_fly = threshold_fly
+    def __init__(self, move_set: DefaultRulesWithFly, threshold_fly: int):
+        self._move_set: DefaultRulesWithFly = move_set
+        self._threshold_fly: int = threshold_fly
 
     def make_move(self, pos: tuple, player: Player.IPlayer, board: Board.IBoard) -> None:
         if not self._valid_move(pos, player, board):
@@ -31,5 +32,5 @@ class SelectWithFlyState(DefaultMoveSet.SelectState):
 
 class FlyState(DefaultMoveSet.MoveState):
     def get_possible_moves(self, player: Player.IPlayer, board: Board.IBoard) -> List[tuple]:
-        return board.get_positions_empty_vertexes()
+        return board.get_positions_empty_vertexes() + board.get_positions_with_color(player.color)
 

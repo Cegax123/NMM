@@ -94,6 +94,8 @@ class MoveState(MoveSet.State):
             return
 
         start_pos = player.start_pos
+        player.start_pos = (-1, -1)
+
         board.remove_piece_in_pos(start_pos)
         board.assign_color_in_pos(pos, player.color)
 

@@ -55,6 +55,13 @@ class PlayerDirector:
 
         return self._builder.get_result()
 
+    def build_five_men_morris_player(self, color: PieceColor) -> Player.IPlayer:
+        self._builder.set_color(color)
+        self._builder.set_pieces_to_insert(5)
+        self._builder.set_move_set(DefaultMoveSet.DefaultMoveSet())
+
+        return self._builder.get_result()
+
     def build_nine_men_morris_player(self, color: PieceColor) -> Player.IPlayer:
         self._builder.set_color(color)
         self._builder.set_pieces_to_insert(9)

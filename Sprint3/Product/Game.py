@@ -31,4 +31,5 @@ class GameState:
         else:
             return self.player2
 
-
+    def make_move(self, pos):
+        self.current_player.make_move(pos, self.board)

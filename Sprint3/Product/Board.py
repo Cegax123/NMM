@@ -38,17 +38,46 @@ class IBoard(ABC):
     def check_mill_in_pos(self, pos: tuple) -> bool:
         pass
 
+    @property
+    @abstractmethod
+    def rows(self) -> int:
+        pass
+
+    @property
+    @abstractmethod
+    def cols(self) -> int:
+        pass
+
+    @property
+    @abstractmethod
+    def positions(self) -> List[tuple]:
+        pass
+
+    @property
+    @abstractmethod
+    def edges(self) -> List[tuple]:
+        pass
 
 @dataclass
 class Board(IBoard, ABC):
     def __init__(self, rows, cols, positions, edges):
         self._rows = rows
         self._cols = cols
+        self._positions = positions
+        self._edges = edges
 
         self._vertexes: List[IVertex] = []
 
         self._add_vertexes_from_positions(positions)
         self._add_neighbors_from_edges(edges)
+
+    @property
+    def positions(self) -> List[tuple]:
+        return self._positions
+
+    @property
+    def edges(self) -> List[tuple]:
+        return self._edges
 
     def get_positions_empty_neighbors_of_pos(self, pos: tuple) -> List[tuple]:
         positions = []
@@ -114,4 +143,12 @@ class Board(IBoard, ABC):
         for v1, v2 in edges:
             self._vertexes[v1].add_neighbor(self._vertexes[v2])
             self._vertexes[v2].add_neighbor(self._vertexes[v1])
+
+    @property
+    def rows(self) -> int:
+        return self._rows
+
+    @property
+    def cols(self) -> int:
+        return self._cols
 
