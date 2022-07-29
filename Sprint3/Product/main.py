@@ -3,6 +3,7 @@ import GameBuilder
 from PlayerType import PlayerType
 from DefaultMoveSet import DefaultMoveSet
 from DefaultWithFlyMoveSet import DefaultRulesWithFly
+from Minimax import *
 import GUI
 
 WIDTH, HEIGHT = 700, 700
@@ -26,6 +27,9 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 game_state.end_game()
+            if game_state.turn % 2 == 1:
+                eval,pos = minimax(node(game_state,move_set1,move_set2),3)
+                move_set2.make_move(pos,game_state)
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
@@ -35,6 +39,7 @@ def main():
                     if game_state.turn % 2 == 0:
                         move_set1.make_move(pos_board, game_state)
                     else:
+                        
                         move_set2.make_move(pos_board, game_state)
 
         surf.fill(BG_COLOR)

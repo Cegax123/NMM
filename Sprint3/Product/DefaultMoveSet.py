@@ -75,8 +75,8 @@ class MoveState(MoveSet.State):
     def get_possible_moves(self, game_state: Game.GameState) -> List[tuple]:
         start_pos = game_state.current_player.start_pos
         empty_adyacent = game_state.board.get_positions_empty_neighbors_of_pos(start_pos)
-        same_color = game_state.board.get_positions_with_color(game_state.current_player.color)
-        return empty_adyacent + same_color
+        #same_color = game_state.board.get_positions_with_color(game_state.current_player.color)
+        return empty_adyacent #+ same_color
 
     def make_move(self, pos: tuple, game_state: Game.GameState) -> None:
         if not self._valid_move(pos, game_state):

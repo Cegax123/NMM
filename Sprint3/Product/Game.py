@@ -16,11 +16,14 @@ class GameState:
         self.running = False
 
     def change_turn(self):
-        self.turn += 1
+        self.turn ^= 1
+
+    def evaluate(self):
+        return self.current_player.pieces_in_board - self.player2.pieces_in_board
 
     @property
     def current_player(self) -> Player.IPlayer:
-        if self.turn % 2 == 0:
+        if self.turn == 0:
             return self.player1
         else:
             return self.player2
