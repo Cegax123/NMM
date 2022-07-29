@@ -94,7 +94,7 @@ class Board(IBoard, ABC):
         positions = []
 
         for vertex in self._vertexes:
-            if vertex == piece_color:
+            if vertex._piece_color == piece_color:
                 positions.append(vertex.pos)
 
         return positions
@@ -159,7 +159,8 @@ class BoardNineMenMorris(Board):
 
         self._positions = [(0, 0), (0, 2), (0, 4), (1, 1), (1, 2), (1, 3),
                            (2, 0), (2, 1), (2, 3), (2, 4),
-                           (3, 1), (3, 2), (3, 3), (4, 0), (4, 2), (4, 4)]
+                           (3, 1), (3, 2), (3, 3), 
+                           (4, 0), (4, 2), (4, 4)]
 
         self._add_vertexes_from_positions()
 
@@ -170,5 +171,3 @@ class BoardNineMenMorris(Board):
                        (11, 14), (5, 8), (8, 12), (2, 9), (9, 15)]
 
         self._add_neighbors_from_edges()
-
-
