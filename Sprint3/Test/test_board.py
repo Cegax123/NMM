@@ -1,7 +1,7 @@
 import sys
 sys.path.append("../Product")
 
-from Board import BoardNineMenMorris
+from Board import Board ,BoardThreeMenMorris
 
 import unittest
 
