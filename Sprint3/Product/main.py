@@ -19,7 +19,7 @@ def main():
     turn = 1
 
     move_handler = State.MoveHandler()
-    game_state = GameBuilder.GameDirector().build_game(BoardVariant.FIVE_MEN_MORRIS, PlayerType.HUMAN, PlayerType.BOT)
+    game_state = GameBuilder.GameDirector().build_game(BoardVariant.NINE_MEN_MORRIS, PlayerType.HUMAN, PlayerType.BOT)
     game_gui = GUI.GUI(surf, game_state, MARGIN, WIDTH - 2 * MARGIN)
     my_bot = Bot.BotMinimax()
 
@@ -33,20 +33,20 @@ def main():
 #            print('-------')
             turn ^= 1
 
+        if game_state.current_player.get_type() == PlayerType.BOT and not game_state.winner:
+            best_move = my_bot.get_best_reachable_move(game_state)
+            move_handler.apply_list_moves(best_move, game_state)
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 game_state.exit_program()
 
-            if event.type == pygame.MOUSEBUTTONDOWN and not game_state.winner:
+            if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
                 pos_board = game_gui.get_position_in_board(mouse_pos)
 
-                if game_state.current_player.get_type() == PlayerType.HUMAN:
+                if game_state.current_player.get_type() == PlayerType.HUMAN and not game_state.winner:
                     move_handler.apply_move(pos_board, game_state)
-
-                if game_state.current_player.get_type() == PlayerType.BOT:
-                    best_move = my_bot.get_best_reachable_move(game_state)
-                    move_handler.apply_list_moves(best_move, game_state)
 
         surf.fill(BG_COLOR)
         game_gui.draw_board()
