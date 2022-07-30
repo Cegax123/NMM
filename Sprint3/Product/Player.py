@@ -2,20 +2,11 @@ from abc import ABC, abstractmethod
 from PieceColor import PieceColor
 from dataclasses import dataclass
 from PlayerType import PlayerType
+from PlayerState import PlayerState
 
 
 @dataclass
 class IPlayer(ABC):
-    @property
-    @abstractmethod
-    def start_pos(self) -> tuple:
-        pass
-
-    @start_pos.setter
-    @abstractmethod
-    def start_pos(self, start_pos: tuple) -> None:
-        pass
-
     @property
     @abstractmethod
     def color(self) -> PieceColor:
@@ -41,6 +32,16 @@ class IPlayer(ABC):
     def pieces_in_board(self, int) -> None:
         pass
 
+    @property
+    @abstractmethod
+    def state(self) -> PlayerState:
+        pass
+
+    @state.setter
+    @abstractmethod
+    def state(self, state) -> None:
+        pass
+
     @abstractmethod
     def get_type(self) -> PlayerType:
         pass
@@ -53,15 +54,36 @@ class IPlayer(ABC):
     def check_lost(self) -> bool:
         pass
 
+    @property
+    @abstractmethod
+    def start_pos(self) -> tuple:
+        pass
 
-class HumanPlayer(IPlayer):
-    def __init__(self, color: PieceColor, pieces_to_insert: int):
+    @start_pos.setter
+    @abstractmethod
+    def start_pos(self, start_pos: tuple) -> None:
+        pass
+
+    @abstractmethod
+    def start_selected(self) -> bool:
+        pass
+
+    @abstractmethod
+    def unselect_start(self) -> None:
+        pass
+
+
+class Player(IPlayer):
+    def __init__(self, color: PieceColor, pieces_to_insert: int, type_player: PlayerType):
         self._color = color
         self._pieces_in_board = 0
         self._pieces_to_insert = pieces_to_insert
-        self._start_pos = (-1, -1)
+        self._state = PlayerState.INSERT
 
-        self._type = PlayerType.HUMAN
+        self._type = type_player
+
+        self.DUMMY_POS = (-1, -1)
+        self._start_pos = self.DUMMY_POS
 
     @property
     def type(self) -> PlayerType:
@@ -70,14 +92,6 @@ class HumanPlayer(IPlayer):
     @property
     def color(self):
         return self._color
-
-    @property
-    def start_pos(self) -> tuple:
-        return self._start_pos
-
-    @start_pos.setter
-    def start_pos(self, start_pos) -> None:
-        self._start_pos = start_pos
 
     @property
     def pieces_in_board(self) -> int:
@@ -95,6 +109,14 @@ class HumanPlayer(IPlayer):
     def pieces_to_insert(self, pieces_to_insert) -> None:
         self._pieces_to_insert = pieces_to_insert
 
+    @property
+    def state(self) -> PlayerState:
+        return self._state
+
+    @state.setter
+    def state(self, state) -> None:
+        self._state = state
+
     def get_type(self):
         return self._type
 
@@ -104,3 +126,16 @@ class HumanPlayer(IPlayer):
     def check_lost(self) -> bool:
         return self._pieces_to_insert + self._pieces_in_board < 3
 
+    @property
+    def start_pos(self) -> tuple:
+        return self._start_pos
+
+    @start_pos.setter
+    def start_pos(self, start_pos) -> None:
+        self._start_pos = start_pos
+
+    def start_selected(self) -> bool:
+        return self._start_pos != self.DUMMY_POS
+
+    def unselect_start(self) -> None:
+        self._start_pos = self.DUMMY_POS

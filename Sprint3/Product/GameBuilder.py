@@ -1,5 +1,6 @@
 from PieceColor import PieceColor
 from BoardVariant import BoardVariant
+from PlayerType import PlayerType
 import Game
 import BoardBuilder
 import PlayerBuilder
@@ -15,57 +16,34 @@ class GameBuilder:
     def set_board(self, board):
         self._board = board
 
+    def set_threshold_dly(self, threshold_fly):
+        self._threshold_fly = threshold_fly
+
     def get_result(self) -> Game.GameState:
-        return Game.GameState(self._player1, self._player2, self._board)
+        return Game.GameState(self._player1, self._player2, self._board, self._threshold_fly)
 
 
 class GameDirector:
     _builder: GameBuilder = GameBuilder()
+    _player_director: PlayerBuilder.PlayerDirector = PlayerBuilder.PlayerDirector()
+    _board_director: BoardBuilder.BoardDirector = BoardBuilder.BoardDirector()
 
-    def build_two_player_nine_men_morris_game(self) -> Game.GameState:
-        human_player_builder = PlayerBuilder.HumanPlayerBuilder()
-        player_director = PlayerBuilder.PlayerDirector()
-        player_director.builder = human_player_builder
+    def build_game(self, board_variant: BoardVariant, type_player_1: PlayerType, type_player_2: PlayerType) -> Game.GameState:
+        player1 = self._player_director.build_player(board_variant, PieceColor.WHITE, type_player_1)
+        player2 = self._player_director.build_player(board_variant, PieceColor.BLACK, type_player_2)
 
-        player1 = player_director.build_nine_men_morris_player(PieceColor.WHITE)
-        player2 = player_director.build_nine_men_morris_player(PieceColor.BLACK)
-
-        board = BoardBuilder.BoardDirector().build_board(BoardVariant.NINE_MEN_MORRIS)
-
-        self._assign_to_builder(player1, player2, board)
-
-        return self._builder.get_result()
-
-    def build_two_player_five_men_morris_game(self) -> Game.GameState:
-        human_player_builder = PlayerBuilder.HumanPlayerBuilder()
-        player_director = PlayerBuilder.PlayerDirector()
-        player_director.builder = human_player_builder
-
-        player1 = player_director.build_five_men_morris_player(PieceColor.WHITE)
-        player2 = player_director.build_five_men_morris_player(PieceColor.BLACK)
-
-        board = BoardBuilder.BoardDirector().build_board(BoardVariant.FIVE_MEN_MORRIS)
-
-        self._assign_to_builder(player1, player2, board)
-
-        return self._builder.get_result()
-
-    def build_two_player_three_men_morris_game(self) -> Game.GameState:
-        human_player_builder = PlayerBuilder.HumanPlayerBuilder()
-        player_director = PlayerBuilder.PlayerDirector()
-        player_director.builder = human_player_builder
-
-        player1 = player_director.build_three_men_morris_player(PieceColor.WHITE)
-        player2 = player_director.build_three_men_morris_player(PieceColor.BLACK)
-
-        board = BoardBuilder.BoardDirector().build_board(BoardVariant.THREE_MEN_MORRIS)
-
-        self._assign_to_builder(player1, player2, board)
-
-        return self._builder.get_result()
-
-    def _assign_to_builder(self, player1, player2, board):
         self._builder.set_player1(player1)
         self._builder.set_player2(player2)
+
+        board = self._board_director.build_board(board_variant)
         self._builder.set_board(board)
+
+        if board_variant == BoardVariant.THREE_MEN_MORRIS:
+            self._builder.set_threshold_dly(-1)
+        if board_variant == BoardVariant.FIVE_MEN_MORRIS:
+            self._builder.set_threshold_dly(-1)
+        if board_variant == BoardVariant.NINE_MEN_MORRIS:
+            self._builder.set_threshold_dly(3)
+
+        return self._builder.get_result()
 
