@@ -6,6 +6,7 @@ from PlayerType import PlayerType
 from BoardVariant import BoardVariant
 from pprint import pprint
 import GUI
+import Bot
 
 WIDTH, HEIGHT = 700, 700
 MARGIN = 50
@@ -18,15 +19,18 @@ def main():
     turn = 1
 
     move_handler = State.MoveHandler()
-    game_state = GameBuilder.GameDirector().build_game(BoardVariant.NINE_MEN_MORRIS, PlayerType.HUMAN, PlayerType.HUMAN)
+    game_state = GameBuilder.GameDirector().build_game(BoardVariant.THREE_MEN_MORRIS, PlayerType.HUMAN, PlayerType.HUMAN)
     game_gui = GUI.GUI(surf, game_state, MARGIN, WIDTH - 2 * MARGIN)
+    my_bot = Bot.BotMinimax()
 
     while game_state.running:
         if turn != game_state.turn:
-            pprint(move_handler.get_possible_moves_to_change_turn(game_state))
+            print(my_bot.get_best_reachable_move(game_state))
 
-            print('-------')
-            print('-------')
+#            pprint(move_handler.get_possible_moves_to_change_turn(game_state))
+
+#            print('-------')
+#            print('-------')
             turn ^= 1
 
 

@@ -20,6 +20,9 @@ class GameState:
     def change_turn(self):
         self.turn ^= 1
 
+    def evaluate(self, turn):
+        return (1-2*turn)*(self.player1.pieces_in_board-self.player2.pieces_in_board)
+
     @property
     def current_player(self) -> Player.IPlayer:
         if self.turn % 2 == 0:
