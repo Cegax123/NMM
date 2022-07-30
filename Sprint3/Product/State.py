@@ -43,16 +43,21 @@ class MoveHandler(IState):
         state.apply_move(pos, game_state)
 
     def apply_list_moves(self, list_pos: List[tuple], game_state: Game.GameState) -> None:
-        state = StateFactory.get_state(game_state.current_player.state)
-        state.apply_list_moves(list_pos, game_state)
+        for pos in list_pos:
+            state = StateFactory.get_state(game_state.current_player.state)
+            state.apply_move(pos, game_state)
 
     def get_result_move(self, pos: tuple, game_state: Game.GameState) -> Game.GameState:
         state = StateFactory.get_state(game_state.current_player.state)
         return state.get_result_move(pos, game_state)
 
     def get_result_list_moves(self, list_pos: List[tuple], game_state: Game.GameState) -> Game.GameState:
-        state = StateFactory.get_state(game_state.current_player.state)
-        return state.get_result_list_moves(list_pos, game_state)
+        game_state = deepcopy(game_state)
+        for pos in list_pos:
+            state = StateFactory.get_state(game_state.current_player.state)
+            state.apply_move(pos, game_state)
+
+        return game_state
 
     def get_possible_moves(self, game_state: Game.GameState) -> List[tuple]:
         state = StateFactory.get_state(game_state.current_player.state)
@@ -254,11 +259,10 @@ class RemoveState(State):
             return
 
         game_state.enemy_player.pieces_in_board -= 1
+        game_state.board.remove_piece_in_pos(pos)
 
         if game_state.enemy_player.pieces_in_board <= game_state.threshold_fly:
             game_state.enemy_player.state = PlayerState.FLY
-
-        game_state.board.remove_piece_in_pos(pos)
 
         pieces_to_insert = game_state.current_player.pieces_to_insert
         pieces_in_board = game_state.current_player.pieces_in_board
@@ -273,6 +277,7 @@ class RemoveState(State):
 
         if game_state.enemy_player.check_lost():
             game_state.end_game()
+
 
         game_state.change_turn()
 
