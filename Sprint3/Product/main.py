@@ -19,7 +19,7 @@ def main():
     turn = 1
 
     move_handler = State.MoveHandler()
-    game_state = GameBuilder.GameDirector().build_game(BoardVariant.FIVE_MEN_MORRIS, PlayerType.HUMAN, PlayerType.BOT)
+    game_state = GameBuilder.GameDirector().build_game(BoardVariant.THREE_MEN_MORRIS, PlayerType.HUMAN, PlayerType.BOT)
     game_gui = GUI.GUI(surf, game_state, MARGIN, WIDTH - 2 * MARGIN)
     my_bot = Bot.BotMinimax()
 
