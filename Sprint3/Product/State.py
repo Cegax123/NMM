@@ -30,6 +30,9 @@ class IState(ABC):
     def get_possible_moves_to_change_turn(self, game_state: Game.GameState) -> List[List[tuple]]:
         pass
 
+
+    # List[(list_pos_to_change_turn, new_game_state)]
+
     @abstractmethod
     def obtain_result_change_turn(self, game_state: Game.GameState) -> List[tuple]:
         pass
@@ -106,11 +109,18 @@ class State(IState, ABC):
                 move_handler = MoveHandler()
                 possible_moves = move_handler.get_possible_moves(game_state)
 
+                selected = game_state.current_player.start_selected()
+
                 for pos in possible_moves:
                     next_list_pos = list_pos.copy()
                     next_list_pos.append(pos)
 
                     next_game_state = move_handler.get_result_move(pos, game_state)
+
+                    new_selected = next_game_state.current_player.start_selected()
+
+                    if selected and new_selected:
+                        continue
 
                     if current_turn != next_game_state.turn:
                         list_moves.append(next_list_pos)
@@ -244,6 +254,10 @@ class RemoveState(State):
             return
 
         game_state.enemy_player.pieces_in_board -= 1
+
+        if game_state.enemy_player.pieces_in_board <= game_state.threshold_fly:
+            game_state.enemy_player.state = PlayerState.FLY
+
         game_state.board.remove_piece_in_pos(pos)
 
         pieces_to_insert = game_state.current_player.pieces_to_insert
@@ -252,10 +266,10 @@ class RemoveState(State):
         if pieces_to_insert > 0:
             game_state.current_player.state = PlayerState.INSERT
         else:
-            if pieces_in_board > game_state.threshold_fly:
-                game_state.current_player.state = PlayerState.MOVE
-            else:
+            if pieces_in_board <= game_state.threshold_fly:
                 game_state.current_player.state = PlayerState.FLY
+            else:
+                game_state.current_player.state = PlayerState.MOVE
 
         if game_state.enemy_player.check_lost():
             game_state.end_game()

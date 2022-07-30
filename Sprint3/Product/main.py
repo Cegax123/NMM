@@ -1,3 +1,4 @@
+from typing import Deque
 import pygame
 import GameBuilder
 import State
@@ -17,8 +18,7 @@ def main():
     turn = 1
 
     move_handler = State.MoveHandler()
-    game_state = GameBuilder.GameDirector().build_game(BoardVariant.FIVE_MEN_MORRIS, PlayerType.HUMAN, PlayerType.HUMAN)
-
+    game_state = GameBuilder.GameDirector().build_game(BoardVariant.NINE_MEN_MORRIS, PlayerType.HUMAN, PlayerType.HUMAN)
     game_gui = GUI.GUI(surf, game_state, MARGIN, WIDTH - 2 * MARGIN)
 
     while game_state.running:

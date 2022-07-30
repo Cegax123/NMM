@@ -16,7 +16,7 @@ class GameBuilder:
     def set_board(self, board):
         self._board = board
 
-    def set_threshold_dly(self, threshold_fly):
+    def set_threshold_fly(self, threshold_fly):
         self._threshold_fly = threshold_fly
 
     def get_result(self) -> Game.GameState:
@@ -39,11 +39,11 @@ class GameDirector:
         self._builder.set_board(board)
 
         if board_variant == BoardVariant.THREE_MEN_MORRIS:
-            self._builder.set_threshold_dly(-1)
+            self._builder.set_threshold_fly(-1)
         if board_variant == BoardVariant.FIVE_MEN_MORRIS:
-            self._builder.set_threshold_dly(-1)
+            self._builder.set_threshold_fly(-1)
         if board_variant == BoardVariant.NINE_MEN_MORRIS:
-            self._builder.set_threshold_dly(3)
+            self._builder.set_threshold_fly(3)
 
         return self._builder.get_result()
 

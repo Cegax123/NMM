@@ -51,7 +51,7 @@ class PlayerDirector:
         return self._builder.get_result()
 
     def build_nine_men_morris_player(self) -> Player.IPlayer:
-        self._builder.set_pieces_to_insert(9)
+        self._builder.set_pieces_to_insert(4)
         return self._builder.get_result()
 
     def build_player(self, board_variant: BoardVariant, color: PieceColor, type_player: PlayerType) -> Player.IPlayer:
