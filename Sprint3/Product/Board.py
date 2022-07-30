@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import List
 from PieceColor import PieceColor
 from Vertex import IVertex, Vertex

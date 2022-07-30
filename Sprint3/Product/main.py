@@ -1,8 +1,9 @@
 import pygame
 import GameBuilder
+import State
 from PlayerType import PlayerType
-from DefaultMoveSet import DefaultMoveSet
-from DefaultWithFlyMoveSet import DefaultRulesWithFly
+from BoardVariant import BoardVariant
+from pprint import pprint
 import GUI
 
 WIDTH, HEIGHT = 700, 700
@@ -13,16 +14,22 @@ pygame.display.set_caption("Nine Men's Morris Game")
 surf = pygame.display.set_mode((WIDTH, HEIGHT))
 
 def main():
-    # game_state = GameBuilder.GameDirector().build_two_player_three_men_morris_game()
-    game_state = GameBuilder.GameDirector().build_two_player_five_men_morris_game()
-    # game_state = GameBuilder.GameDirector().build_two_player_nine_men_morris_game()
+    turn = 1
 
-    move_set1 = DefaultRulesWithFly(3)
-    move_set2 = DefaultRulesWithFly(3)
+    move_handler = State.MoveHandler()
+    game_state = GameBuilder.GameDirector().build_game(BoardVariant.FIVE_MEN_MORRIS, PlayerType.HUMAN, PlayerType.HUMAN)
 
     game_gui = GUI.GUI(surf, game_state, MARGIN, WIDTH - 2 * MARGIN)
 
     while game_state.running:
+        if turn != game_state.turn:
+            pprint(move_handler.get_possible_moves_to_change_turn(game_state))
+
+            print('-------')
+            print('-------')
+            turn ^= 1
+
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 game_state.end_game()
@@ -32,10 +39,7 @@ def main():
                 pos_board = game_gui.get_position_in_board(mouse_pos)
 
                 if game_state.current_player.get_type() == PlayerType.HUMAN:
-                    if game_state.turn % 2 == 0:
-                        move_set1.make_move(pos_board, game_state)
-                    else:
-                        move_set2.make_move(pos_board, game_state)
+                    move_handler.apply_move(pos_board, game_state)
 
         surf.fill(BG_COLOR)
         game_gui.draw_board()

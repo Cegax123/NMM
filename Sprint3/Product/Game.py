@@ -2,12 +2,14 @@ import Player
 import Board
 
 
+
 class GameState:
-    def __init__(self, p1: Player.IPlayer, p2: Player.IPlayer, board: Board.IBoard):
+    def __init__(self, p1: Player.IPlayer, p2: Player.IPlayer, board: Board.IBoard, threshold_fly: int):
         self.player1 = p1
         self.player2 = p2
 
         self.board = board
+        self.threshold_fly = threshold_fly
 
         self.turn = 0
         self.running = True
@@ -16,7 +18,7 @@ class GameState:
         self.running = False
 
     def change_turn(self):
-        self.turn += 1
+        self.turn ^= 1
 
     @property
     def current_player(self) -> Player.IPlayer:
