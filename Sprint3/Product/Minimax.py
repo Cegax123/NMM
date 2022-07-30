@@ -14,7 +14,7 @@ def minimax(now , depth):
     #print(now.game_state.evaluate())
     if depth == 0 or not now.game_state.running:
         return now.game_state.evaluate(), (-1,-1)
-    
+
     if now.game_state.turn == 0:
         maxEval = float('-inf')
         best_pos = None
