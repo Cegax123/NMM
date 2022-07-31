@@ -1,9 +1,11 @@
 import pygame
 from button import Button
 from text import Text
+from BoardVariant import BoardVariant
 
 class MenuModeType:
-    def __init__(self):
+    def __init__(self, surface):
+        self.surface = surface
         #load button images
         self.three_img = pygame.image.load("images/three_img.png").convert_alpha()
         self.nine_img = pygame.image.load("images/nine_img.png").convert_alpha()
@@ -26,25 +28,22 @@ class MenuModeType:
         self.text3 = Text("Five men",60,'arialblack',(10,110,168))
 
 
-    def draw(self,surface):
+    def draw(self):
         #Text
-        self.text1.draw(90,100,surface)
-        self.text2.draw(466,100,surface)
-        self.text3.draw(832,100,surface)
-        
+        self.text1.draw(90,100,self.surface)
+        self.text2.draw(466,100,self.surface)
+        self.text3.draw(832,100,self.surface)
+
         #Butoons
-        self.three_button.draw(surface)
-        self.nine_button.draw(surface)
-        self.five_button.draw(surface)
+        self.three_button.draw(self.surface)
+        self.nine_button.draw(self.surface)
+        self.five_button.draw(self.surface)
 
     def check_click(self,mose_pos):
         if self.three_button.is_clicked(mose_pos):
-            self.selected_mode = 'three'
-            return True
+            return BoardVariant.THREE_MEN_MORRIS
         elif self.nine_button.is_clicked(mose_pos):
-            self.selected_mode = 'nine'
-            return True
+            return BoardVariant.NINE_MEN_MORRIS
         elif self.five_button.is_clicked(mose_pos):
-            self.selected_mode = 'five'
-            return True
-        return False     
+            return BoardVariant.FIVE_MEN_MORRIS
+        return None
