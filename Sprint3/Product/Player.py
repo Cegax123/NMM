@@ -72,6 +72,9 @@ class IPlayer(ABC):
     def unselect_start(self) -> None:
         pass
 
+    @abstractmethod
+    def evaluate(self) -> float:
+        pass
 
 class Player(IPlayer):
     def __init__(self, color: PieceColor, pieces_to_insert: int, type_player: PlayerType):
@@ -139,3 +142,9 @@ class Player(IPlayer):
 
     def unselect_start(self) -> None:
         self._start_pos = self.DUMMY_POS
+
+    def evaluate(self) -> float:
+        if self.check_lost():
+            return -1000
+
+        return self.pieces_in_board

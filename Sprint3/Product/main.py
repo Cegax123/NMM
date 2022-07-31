@@ -4,8 +4,8 @@ import State
 from PlayerType import PlayerType
 from Menus import Menus
 from BoardType import MenuModeType
-from BoardVariant import BoardVariant
 from MenuGameMode import MenuMode
+from BoardVariant import BoardVariant
 import GUI
 import Bot
 
@@ -32,7 +32,7 @@ def main():
     while running:
         if current_menu == Menus.GAME_RUNNING:
             if game_state.current_player.get_type() == PlayerType.BOT and not game_state.winner:
-                best_move = my_bot.get_best_reachable_move(game_state)
+                best_move = my_bot.get_best_reachable_move(game_state, depth)
                 move_handler.apply_list_moves(best_move, game_state)
 
         for event in pygame.event.get():
@@ -48,12 +48,19 @@ def main():
                     if result:
                         board_variant = result
 
+                        if board_variant == BoardVariant.THREE_MEN_MORRIS:
+                            depth = 6
+                        if board_variant == BoardVariant.FIVE_MEN_MORRIS:
+                            depth = 5
+                        if board_variant == BoardVariant.NINE_MEN_MORRIS:
+                            depth = 3
+
                         gui = MenuMode(surf)
                         current_menu = Menus.MENU_GAME_MODE
 
                 elif current_menu == Menus.MENU_GAME_MODE:
                     result = gui.check_click(mouse_pos)
-    
+
                     if result:
                         type_player2 = result
 

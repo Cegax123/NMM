@@ -3,6 +3,7 @@ from typing import List, Tuple
 import Game
 import State
 
+
 class IBot(ABC):
     @abstractmethod
     def get_best_reachable_move(self, game_state: Game.GameState) -> List[tuple]:
@@ -11,12 +12,13 @@ class IBot(ABC):
 
 class BotMinimax(IBot):
 
-    def get_best_reachable_move(self, game_state: Game.GameState) -> List[tuple]:
+    def get_best_reachable_move(self, game_state: Game.GameState, depth: int) -> List[tuple]:
         self.current_turn = game_state.turn
-        return self._minimax(game_state, 5, True, float('-inf'), float('inf'))[1]
+        return self._minimax(game_state, depth, True, float('-inf'), float('inf'))[1]
 
     def _minimax(self, game_state: Game.GameState, depth: int, maxPlayer: bool, alpha: float, beta: float) -> Tuple[int, List[tuple]]:
         move_handler = State.MoveHandler()
+
         if depth == 0 or game_state.winner:
             return game_state.evaluate(self.current_turn), []
 

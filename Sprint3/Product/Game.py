@@ -21,7 +21,7 @@ class GameState:
         self.turn ^= 1
 
     def evaluate(self, turn):
-        return (1-2*turn)*(self.player1.pieces_in_board-self.player2.pieces_in_board)
+        return (1.0-2*turn)*(self.player1.evaluate()-self.player2.evaluate())
 
     @property
     def current_player(self) -> Player.IPlayer:
