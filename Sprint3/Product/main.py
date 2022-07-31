@@ -53,7 +53,7 @@ def main():
 
                 elif current_menu == Menus.MENU_GAME_MODE:
                     result = gui.check_click(mouse_pos)
-
+    
                     if result:
                         type_player2 = result
 

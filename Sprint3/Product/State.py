@@ -261,7 +261,7 @@ class RemoveState(State):
         game_state.enemy_player.pieces_in_board -= 1
         game_state.board.remove_piece_in_pos(pos)
 
-        if game_state.enemy_player.pieces_in_board <= game_state.threshold_fly:
+        if game_state.enemy_player.pieces_in_board <= game_state.threshold_fly and game_state.enemy_player.pieces_to_insert == 0:
             game_state.enemy_player.state = PlayerState.FLY
 
         pieces_to_insert = game_state.current_player.pieces_to_insert
