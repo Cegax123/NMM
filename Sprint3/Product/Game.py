@@ -13,6 +13,7 @@ class GameState:
 
         self.turn = 0
         self.winner = False
+        self.name_winner = ''
 
     def end_game(self):
         self.winner = True

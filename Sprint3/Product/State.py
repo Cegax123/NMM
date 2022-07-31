@@ -276,6 +276,9 @@ class RemoveState(State):
                 game_state.current_player.state = PlayerState.MOVE
 
         if game_state.enemy_player.check_lost():
+            if game_state.turn == 0: game_state.name_winner = 'First Player'
+            else: game_state.name_winner = 'Second Player'
+
             game_state.end_game()
 
 

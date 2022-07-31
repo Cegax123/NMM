@@ -4,7 +4,7 @@ class Text():
         pygame.init()
         self.text = text
         self.antialias = True
-        self.colour = colour   
+        self.colour = colour
         self.background = None
         self.font = pygame.font.SysFont(letra,size)
         self.img = self.font.render(self.text, self.antialias, self.colour,self.background)

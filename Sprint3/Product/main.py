@@ -15,7 +15,7 @@ def main():
     WIDTH, HEIGHT = 1200, 800
     surf = pygame.display.set_mode((WIDTH, HEIGHT))
     BG_COLOR = (226, 220, 200)
-    MARGIN = 50
+    MARGIN = 80, 50
 
     board_variant = None
     type_player1 = PlayerType.HUMAN
@@ -68,7 +68,7 @@ def main():
                         surf = pygame.display.set_mode((WIDTH, HEIGHT))
 
                         game_state = GameBuilder.GameDirector().build_game(board_variant, type_player1, type_player2)
-                        gui = GUI.GameRunning(surf, game_state, MARGIN, WIDTH - 2 * MARGIN)
+                        gui = GUI.GameRunning(surf, game_state, MARGIN, WIDTH - 2 * MARGIN[0])
 
                         current_menu = Menus.GAME_RUNNING
 
@@ -81,7 +81,6 @@ def main():
 
         surf.fill(BG_COLOR)
         gui.draw()
-
         pygame.display.update()
 
     pygame.quit()
