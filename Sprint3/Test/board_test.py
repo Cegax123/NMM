@@ -3,7 +3,7 @@ sys.path.append("../Product")
 
 from Vertex import Vertex
 from PieceColor import PieceColor
-from Board import  BoardNineMenMorris,Board
+from BoardBuilder
 import unittest
 
 class TestBoard(unittest.TestCase):

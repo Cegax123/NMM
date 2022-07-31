@@ -13,7 +13,7 @@ class BotMinimax(IBot):
 
     def get_best_reachable_move(self, game_state: Game.GameState) -> List[tuple]:
         self.current_turn = game_state.turn
-        return self._minimax(game_state, 4, True, float('-inf'), float('inf'))[1]
+        return self._minimax(game_state, 5, True, float('-inf'), float('inf'))[1]
 
     def _minimax(self, game_state: Game.GameState, depth: int, maxPlayer: bool, alpha: float, beta: float) -> Tuple[int, List[tuple]]:
         move_handler = State.MoveHandler()

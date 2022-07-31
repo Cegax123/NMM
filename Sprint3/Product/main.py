@@ -41,7 +41,6 @@ def main():
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
-                print(mouse_pos, current_menu)
 
                 if current_menu == Menus.MENU_BOARD_VARIANT:
                     result = gui.check_click(mouse_pos)
