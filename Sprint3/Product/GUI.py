@@ -4,7 +4,7 @@ import pygame
 import Player
 
 
-class GUI:
+class GameRunning:
     def __init__(self, surf, game_state, margin, size):
         self._game_state = game_state
         self._surf = surf
@@ -26,7 +26,7 @@ class GUI:
                     self._positions[i][j].size = (BLOCK, BLOCK)
                     self._positions[i][j].center = (self._margin + j * self._side, self._margin + i * self._side)
 
-    def draw_board(self):
+    def draw(self):
         EDGES_COLOR = (15, 61, 62)
 
         for v1, v2 in self._board.edges:

@@ -17,7 +17,7 @@ class BotMinimax(IBot):
 
     def _minimax(self, game_state: Game.GameState, depth: int, maxPlayer: bool, alpha: float, beta: float) -> Tuple[int, List[tuple]]:
         move_handler = State.MoveHandler()
-        if depth == 0 or not game_state.running:
+        if depth == 0 or game_state.winner:
             return game_state.evaluate(self.current_turn), []
 
         if maxPlayer:

@@ -1,10 +1,10 @@
-from typing import Deque
 import pygame
 import GameBuilder
 import State
 from PlayerType import PlayerType
+from Menus import Menus
 from BoardVariant import BoardVariant
-from pprint import pprint
+from MenuGameMode import MenuMode
 import GUI
 import Bot
 
@@ -16,41 +16,49 @@ pygame.display.set_caption("Nine Men's Morris Game")
 surf = pygame.display.set_mode((WIDTH, HEIGHT))
 
 def main():
-    turn = 1
+    board_variant = BoardVariant.FIVE_MEN_MORRIS
+    type_player1 = PlayerType.HUMAN
+    type_player2 = None
 
-    move_handler = State.MoveHandler()
-    game_state = GameBuilder.GameDirector().build_game(BoardVariant.THREE_MEN_MORRIS, PlayerType.HUMAN, PlayerType.BOT)
-
-    game_gui = GUI.GUI(surf, game_state, MARGIN, WIDTH - 2 * MARGIN)
     my_bot = Bot.BotMinimax()
+    move_handler = State.MoveHandler()
 
-    while game_state.running:
-        if turn != game_state.turn:
-            # print(my_bot.get_best_reachable_move(game_state))
+    current_menu = Menus.MENU_GAME_MODE
+    gui = MenuMode(surf)
 
-#            pprint(move_handler.get_possible_moves_to_change_turn(game_state))
+    running = True
 
-#            print('-------')
-#            print('-------')
-            turn ^= 1
-
-        if game_state.current_player.get_type() == PlayerType.BOT and not game_state.winner:
-            best_move = my_bot.get_best_reachable_move(game_state)
-            move_handler.apply_list_moves(best_move, game_state)
+    while running:
+        if current_menu == Menus.GAME_RUNNING:
+            if game_state.current_player.get_type() == PlayerType.BOT and not game_state.winner:
+                best_move = my_bot.get_best_reachable_move(game_state)
+                move_handler.apply_list_moves(best_move, game_state)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                game_state.exit_program()
+                running = False
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
-                pos_board = game_gui.get_position_in_board(mouse_pos)
 
-                if game_state.current_player.get_type() == PlayerType.HUMAN and not game_state.winner:
-                    move_handler.apply_move(pos_board, game_state)
+                if current_menu == Menus.MENU_GAME_MODE:
+                    result = gui.check_click(mouse_pos)
+
+                    if result:
+                        type_player2 = result
+
+                        game_state = GameBuilder.GameDirector().build_game(board_variant, type_player1, type_player2)
+                        gui = GUI.GameRunning(surf, game_state, MARGIN, WIDTH - 2 * MARGIN)
+
+                        current_menu = Menus.GAME_RUNNING
+
+                elif current_menu == Menus.GAME_RUNNING:
+                    if game_state.current_player.get_type() == PlayerType.HUMAN and not game_state.winner:
+                        pos_board = 
+                        move_handler.apply_move(pos_board, game_state)
 
         surf.fill(BG_COLOR)
-        game_gui.draw_board()
+        gui.draw()
 
         pygame.display.update()
 

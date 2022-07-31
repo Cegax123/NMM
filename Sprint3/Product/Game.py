@@ -12,14 +12,10 @@ class GameState:
         self.threshold_fly = threshold_fly
 
         self.turn = 0
-        self.running = True
         self.winner = False
 
     def end_game(self):
         self.winner = True
-
-    def exit_program(self):
-        self.running = False
 
     def change_turn(self):
         self.turn ^= 1
