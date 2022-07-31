@@ -54,7 +54,7 @@ def main():
 
                 elif current_menu == Menus.GAME_RUNNING:
                     if game_state.current_player.get_type() == PlayerType.HUMAN and not game_state.winner:
-                        pos_board = 
+                        pos_board = gui.get_position_in_board(mouse_pos)
                         move_handler.apply_move(pos_board, game_state)
 
         surf.fill(BG_COLOR)

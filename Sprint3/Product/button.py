@@ -12,9 +12,8 @@ class Button():
         self.clicked = False
     def draw(self, surface):
         surface.blit(self.image,(self.rect.x,self.rect.y))
-    
+
     def is_clicked(self, mouse_pos):
         if self.rect.collidepoint(mouse_pos):
-            return True 
+            return True
 
-        
