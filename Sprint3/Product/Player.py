@@ -73,7 +73,7 @@ class IPlayer(ABC):
         pass
 
     @abstractmethod
-    def evaluate(self) -> float:
+    def evaluate(self) -> int:
         pass
 
 class Player(IPlayer):
@@ -143,8 +143,9 @@ class Player(IPlayer):
     def unselect_start(self) -> None:
         self._start_pos = self.DUMMY_POS
 
-    def evaluate(self) -> float:
+    def evaluate(self) -> int:
+        eval = self.pieces_in_board
         if self.check_lost():
-            return -1000
+            eval -= 1000
 
-        return self.pieces_in_board
+        return eval

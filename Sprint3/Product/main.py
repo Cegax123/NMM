@@ -49,7 +49,7 @@ def main():
                         board_variant = result
 
                         if board_variant == BoardVariant.THREE_MEN_MORRIS:
-                            depth = 6
+                            depth = 8
                         if board_variant == BoardVariant.FIVE_MEN_MORRIS:
                             depth = 5
                         if board_variant == BoardVariant.NINE_MEN_MORRIS:
