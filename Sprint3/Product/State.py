@@ -30,12 +30,10 @@ class IState(ABC):
     def get_possible_moves_to_change_turn(self, game_state: Game.GameState) -> List[List[tuple]]:
         pass
 
-
-    # List[(list_pos_to_change_turn, new_game_state)]
-
     @abstractmethod
     def obtain_result_change_turn(self, game_state: Game.GameState) -> List[tuple]:
         pass
+
 
 class MoveHandler(IState):
     def apply_move(self, pos: tuple, game_state: Game.GameState) -> None:
@@ -171,6 +169,8 @@ class InsertState(State):
         else:
             if game_state.current_player.pieces_to_insert == 0:
                 game_state.current_player.state = PlayerState.MOVE
+                if game_state.current_player.pieces_in_board <= game_state.threshold_fly:
+                    game_state.current_player.state = PlayerState.FLY
 
             game_state.change_turn()
 

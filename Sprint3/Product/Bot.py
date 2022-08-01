@@ -17,7 +17,7 @@ class BotMinimax(IBot):
     def __init__(self) -> None:
         self.move_handler = State.MoveHandler()
         self.max_ms = 5000
-    
+
     def get_best_reachable_move(self, game_state: Game.GameState, depth: int) -> List[tuple]:
         self.current_turn = game_state.turn
         self.start_time = time.time()
@@ -26,7 +26,6 @@ class BotMinimax(IBot):
         return ans[1]
         #return self._iterative_deepening(game_state)
 
-    
     def _check_time(self):
         time_diff_ms = (time.time() - self.start_time)*1000
         return time_diff_ms >= self.max_ms
@@ -41,7 +40,6 @@ class BotMinimax(IBot):
         #pos_new_moves.sort(key = len, reverse = True)
         random.shuffle(pos_new_moves)
 
-        
 
         if maxPlayer:
             maxEval = float('-inf')

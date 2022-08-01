@@ -2,11 +2,10 @@ import Player
 import Board
 
 
-
 class GameState:
     def __init__(self, p1: Player.IPlayer, p2: Player.IPlayer, board: Board.IBoard, threshold_fly: int):
-        self.player1 = p1
-        self.player2 = p2
+        self._player1 = p1
+        self._player2 = p2
 
         self.board = board
         self.threshold_fly = threshold_fly
@@ -15,6 +14,22 @@ class GameState:
         self.winner = False
         self.name_winner = ''
 
+    @property
+    def player1(self):
+        return self._player1
+
+    @property
+    def player2(self):
+        return self._player2
+
+    @player1.setter
+    def player1(self, player):
+        self._player1 = player
+
+    @player2.setter
+    def player2(self, player):
+        self._player2 = player
+
     def end_game(self):
         self.winner = True
 
@@ -22,19 +37,19 @@ class GameState:
         self.turn ^= 1
 
     def evaluate(self, turn):
-        return (1-2*turn)*(self.player1.evaluate()-self.player2.evaluate())
+        return (1-2*turn)*(self._player1.evaluate()-self._player2.evaluate())
 
     @property
     def current_player(self) -> Player.IPlayer:
         if self.turn % 2 == 0:
-            return self.player1
+            return self._player1
         else:
-            return self.player2
+            return self._player2
 
     @property
     def enemy_player(self) -> Player.IPlayer:
         if self.turn % 2 == 0:
-            return self.player2
+            return self._player2
         else:
-            return self.player1
+            return self._player1
 
